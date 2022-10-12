@@ -1,3 +1,4 @@
+import Button from 'react-bootstrap/Button';
 import React from "react";
 class MainButton extends React.Component {
     constructor(props){
@@ -21,20 +22,19 @@ class MainButton extends React.Component {
     render() {
         return (
             <div className="Mainbutton">
-                <span>Button: </span>
                 {!this.state.pressed &&
                 <React.Fragment>
-                    <button className = "square" onClick={this.click}>
+                    <Button onClick={this.click}>
                         {this.state.startButton}
-                    </button>
+                    </Button>
                     <this.state.unPressedComponent />
                 </React.Fragment>
                 }
                 {this.state.pressed &&
                 <React.Fragment>
-                    <button onClick={this.click}>
+                    <Button onClick={this.click}>
                         {this.state.backButton}
-                    </button>
+                    </Button>
                     <this.state.pressedComponent />
                 </React.Fragment>
                 }

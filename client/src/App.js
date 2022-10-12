@@ -1,10 +1,12 @@
 import React from "react"; 
 
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import Chart1 from './Components/Chart1';
 import MainButton from './Components/MainButton';
 import ButtonLists from './Components/ButtonLists';
 import BasicButton from './Components/BasicButton';
+import Stack from 'react-bootstrap/Stack'
 
 let test1 = [1,2,3,4,5,6,7,8];
 let test2 = [1,2,3,4,5,6,9,6];
@@ -43,7 +45,7 @@ class App extends React.Component {
   render() {
     return(
       <div>
-        <h1>Very Early UI Prototype</h1>
+        <h1>Danity</h1>
         <p className="App-intro">{this.state.apiResponse}</p>
         <div>
           <MainButton 

@@ -1,5 +1,6 @@
 import React from "react";
 import BasicButton from "./BasicButton";
+import Stack from 'react-bootstrap/Stack';
 class ButtonLists extends React.Component {
     constructor(props){
         super(props);
@@ -62,12 +63,15 @@ class ButtonLists extends React.Component {
 
     render(){
         return (
-            <div className="SmallButton">
-                <BasicButton name = {"+"} clickMethod = {this.plus}/>
-                <BasicButton name = {"-"} clickMethod = {this.minus}/>
-                <BasicButton name = {"reset"} clickMethod = {this.reset}/>
+            <>
+                <Stack direction="horizontal" gap={2}>
+                    <BasicButton name = {"+"} clickMethod = {this.plus}/>
+                    <BasicButton name = {"-"} clickMethod = {this.minus}/>
+                    <BasicButton name = {"reset"} clickMethod = {this.reset}/>
+                    
+                </Stack>
                 <this.manageList/>
-            </div>
+            </>
         );
     }
 }

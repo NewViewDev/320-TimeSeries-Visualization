@@ -1,3 +1,4 @@
+import Button from 'react-bootstrap/Button';
 import React from "react";
 class BasicButton extends React.Component {
     constructor(props){
@@ -28,9 +29,9 @@ class BasicButton extends React.Component {
         return (
             <React.Fragment>
                 {this.state.returnedData}
-                <button onClick={this.click}>
+                <Button variant="primary" onClick={this.click}>
                     {this.state.button}
-                </button>
+                </Button>
             </React.Fragment>
         );
     }
