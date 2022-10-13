@@ -6,7 +6,9 @@ import Chart1 from './Components/Chart1';
 import MainButton from './Components/MainButton';
 import ButtonLists from './Components/ButtonLists';
 import BasicButton from './Components/BasicButton';
+import DropDownTest from "./Components/DropDownTest";
 import Stack from 'react-bootstrap/Stack'
+import TimeTesting from "./Components/TimeTesting";
 
 let test1 = [1,2,3,4,5,6,7,8];
 let test2 = [1,2,3,4,5,6,9,6];
@@ -23,7 +25,7 @@ class App extends React.Component {
         .then(res => this.setState({ apiResponse: res }));
   }
 
-  componentWillMount() {
+  componentWillMount() {//i think componentWillMount is being deprecated, so this so be updated
       this.callAPI();
   }
 
@@ -56,10 +58,12 @@ class App extends React.Component {
                   <div>
                       <ButtonLists name = "hi2"/>
                       <BasicButton name = "testFiltered" clickMethod = {() => <Chart1/>}/>
+                      <DropDownTest name = "test" list ={[1,2,3]}/>
                   </div>}
           />
           {/* <ButtonLists buttonList name = "hi"/> */}
           <BasicButton name = "closeProgram" clickMethod = {() => console.log("Under Construction")}/>
+          <TimeTesting calenderDate = "2022-12-03" time = "12:00"/>
         </div>
       </div>
     );

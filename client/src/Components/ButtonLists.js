@@ -1,5 +1,6 @@
 import React from "react";
 import BasicButton from "./BasicButton";
+import DropDownTest from "./DropDownTest";
 import Stack from 'react-bootstrap/Stack';
 class ButtonLists extends React.Component {
     constructor(props){
@@ -19,7 +20,8 @@ class ButtonLists extends React.Component {
     manageList() {
         this.comList = this.state.list.map((number) =>
             <li key = {number}>{
-                    <BasicButton name = {"Filter #" + (number + 1)} clickMethod = {() => console.log("Clicked on Button " + (number + 1))}/>
+                    // <BasicButton name = {"Filter #" + (number + 1)} clickMethod = {() => console.log("Clicked on Button " + (number + 1))}/>
+                    <DropDownTest name = {"Filter #" + (number + 1)} list = {[1,2,3,4,5]}/>
             }
             </li>
         );
