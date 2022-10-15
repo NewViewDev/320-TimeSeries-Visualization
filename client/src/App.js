@@ -53,17 +53,19 @@ class App extends React.Component {
           <MainButton 
               startButton = {"GoToAnaylisis"} 
               backButton = {"GoBackToSanityCheck"} 
-              unPressedComponent = {() => <div><BasicButton name = "SanityCheck" clickMethod = {this.testingData}/></div>} 
+              unPressedComponent = {() => <div><BasicButton name = "SanityCheck" clickMethod = {this.testingData}/>
+                  <TimeTesting calenderDate = "2022-12-03" time = "12:00"/>
+                </div>} 
               pressedComponent = {() =>  
                   <div>
                       <ButtonLists name = "hi2"/>
                       <BasicButton name = "testFiltered" clickMethod = {() => <Chart1/>}/>
-                      <DropDownTest name = "test" list ={[1,2,3]}/>
+                      <DropDownTest name = "test" list ={["apple","aae","tim","snake","torn", "ti"]}/>
                   </div>}
           />
           {/* <ButtonLists buttonList name = "hi"/> */}
           <BasicButton name = "closeProgram" clickMethod = {() => console.log("Under Construction")}/>
-          <TimeTesting calenderDate = "2022-12-03" time = "12:00"/>
+          
         </div>
       </div>
     );

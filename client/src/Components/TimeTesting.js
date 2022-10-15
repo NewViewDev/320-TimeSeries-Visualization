@@ -71,13 +71,14 @@ class TimeTesting extends React.Component {//just messing with some time compone
 
     onClick(){
         let tempDateFrom = new Date(this.state.from+"T"+this.state.time);
+        console.log(tempDateFrom.getHours);
         console.log(tempDateFrom + "\n" + tempDateFrom.toUTCString());
     }
     render() {
         return (
             <div>
                 <form onSubmit = {this.submitFrom}>
-                    <label> From:
+                    <label> Local Time:
                         <input type = "date" name = "date" onChange = {this.changeFrom} value = {this.state.from}/>
                         <input type = "time" name = "time" onChange = {this.changeFrom} value = {this.state.time}/>
                     </label>
@@ -90,7 +91,7 @@ class TimeTesting extends React.Component {//just messing with some time compone
                         <input type = "time" value = {this.state.timeUTC} readOnly/>
                     </label>
                 </form>
-                <BasicButton name = "CalcDifference" clickMethod = {this.onClick}/>
+                <BasicButton name = "Print Date To Console" clickMethod = {this.onClick}/>
             </div>
             
         );
