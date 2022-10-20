@@ -29,11 +29,11 @@ class DropDownTest extends React.Component {//the number of items following is v
     manageList() {
         this.comList = this.state.filterList.map((number) =>
             <li key = {number}>{
-                    <Dropdown.Item as = "button" onClick={() => {
-                        this.setSelect(number)
-                    }}>
-                        {number}
-                    </Dropdown.Item>
+                <Dropdown.Item as = "button" onClick={() => {
+                    this.setSelect(number)
+                }}>
+                    {number}
+                </Dropdown.Item>
             }
             </li>
         );

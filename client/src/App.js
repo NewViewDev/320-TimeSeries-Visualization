@@ -7,6 +7,8 @@ import MainButton from './Components/MainButton';
 import ButtonLists from './Components/ButtonLists';
 import BasicButton from './Components/BasicButton';
 import DropDownTest from "./Components/DropDownTest";
+import SelectingScenario from "./Components/SelectingScenario"
+import NavbarForWeb from "./Components/NavbarForWeb";
 import Stack from 'react-bootstrap/Stack'
 import TimeTesting from "./Components/TimeTesting";
 
@@ -23,6 +25,12 @@ class App extends React.Component {
     fetch("http://localhost:9000/testAPI")
         .then(res => res.text())
         .then(res => this.setState({ apiResponse: res }));
+    fetch("http://localhost:9000/scenario/1")
+        .then(res => res.json())
+        .then(res => console.log( res ));
+    fetch("http://localhost:9000/scenario")
+        .then(res => res.json())
+        .then(res => console.log( res ));
   }
 
   componentWillMount() {//i think componentWillMount is being deprecated, so this so be updated
@@ -45,31 +53,40 @@ class App extends React.Component {
   }
 
   render() {
+  //   return(
+  //     <div>
+  //       <NavbarForWeb/>
+  //       <h1>Danity</h1>
+  //       <p className="App-intro">{this.state.apiResponse}</p>
+  //       <div>
+  //         <MainButton 
+  //             startButton = {"GoToAnaylisis"} 
+  //             backButton = {"GoBackToSanityCheck"} 
+  //             unPressedComponent = {() => <div><BasicButton name = "SanityCheck" clickMethod = {this.testingData}/>
+  //                 <TimeTesting calenderDate = "2022-12-03" time = "12:00"/>
+  //               </div>} 
+  //             pressedComponent = {() =>  
+  //                 <div>
+  //                     <ButtonLists name = "hi2"/>
+  //                     <BasicButton name = "testFiltered" clickMethod = {() => <Chart1/>}/>
+  //                     <DropDownTest name = "test" list ={["apple","aae","tim","snake","torn", "ti"]}/>
+  //                     <SelectingScenario list = {["apple","aae","tim","snake","torn", "ti"]} selected = {"apple"}/>
+
+  //                 </div>}
+  //         />
+  //         {/* <ButtonLists buttonList name = "hi"/> */}
+  //         <BasicButton name = "closeProgram" clickMethod = {() => console.log("Under Construction")}/>
+          
+  //       </div>
+  //     </div>
+  //   );
     return(
       <div>
-        <h1>Danity</h1>
-        <p className="App-intro">{this.state.apiResponse}</p>
-        <div>
-          <MainButton 
-              startButton = {"GoToAnaylisis"} 
-              backButton = {"GoBackToSanityCheck"} 
-              unPressedComponent = {() => <div><BasicButton name = "SanityCheck" clickMethod = {this.testingData}/>
-                  <TimeTesting calenderDate = "2022-12-03" time = "12:00"/>
-                </div>} 
-              pressedComponent = {() =>  
-                  <div>
-                      <ButtonLists name = "hi2"/>
-                      <BasicButton name = "testFiltered" clickMethod = {() => <Chart1/>}/>
-                      <DropDownTest name = "test" list ={["apple","aae","tim","snake","torn", "ti"]}/>
-                  </div>}
-          />
-          {/* <ButtonLists buttonList name = "hi"/> */}
-          <BasicButton name = "closeProgram" clickMethod = {() => console.log("Under Construction")}/>
-          
-        </div>
+        <NavbarForWeb/>
       </div>
     );
   }
+  
 }
 
 export default App;

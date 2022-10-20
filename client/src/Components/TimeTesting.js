@@ -11,7 +11,7 @@ class TimeTesting extends React.Component {//just messing with some time compone
             time: props.time,// "00:00",
             timeUTC: this.convertDateToTime(tempDate, true)
         }
-        console.log(props.calenderDate + "T" + props.time)
+        // console.log(props.calenderDate + "T" + props.time)
         this.submitFrom = this.submitFrom.bind(this);
         this.changeFrom = this.changeFrom.bind(this);
         this.onClick = this.onClick.bind(this);
@@ -71,7 +71,7 @@ class TimeTesting extends React.Component {//just messing with some time compone
 
     onClick(){
         let tempDateFrom = new Date(this.state.from+"T"+this.state.time);
-        console.log(tempDateFrom.getHours);
+        console.log(tempDateFrom.getHours());
         console.log(tempDateFrom + "\n" + tempDateFrom.toUTCString());
     }
     render() {

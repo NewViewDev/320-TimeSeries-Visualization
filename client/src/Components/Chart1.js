@@ -7,40 +7,60 @@ Chart.register(...registerables);
 class Chart1 extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            button: props.name,
-        }
         this.demoChartData = {
             labels: ["Red"],
             datasets: [{
-                label: "Test",
-                data: [{x:1, y:1}, {x:2, y:2}],
+                label: props.label,
+                data: props.data,
                 backgroundColor: 'rgb(255,0,255)'
             }],
         }
-        
+        this.state = {
+            button: props.name,
+            data: props.data,
+            label: props.name,
+            demoChart: this.demoChartData
+        }
         this.demoChartOptions = {
-            options: {
-                layout: {
-                    padding: 0
+            layout: {
+                padding: 0
+            },
+            scales: {
+                y: {
+                    suggestedMin: 0,
+                    suggestedMax: 10
                 },
-                scales: {
-                    y: {
-                        suggestedMin: 0,
-                        suggestedMax: 5
-                    },
-                    x: {
-                        suggestedMin: 0,
-                        suggestedMax: 5
-                    }
+                x: {
+                    suggestedMin: 0,
+                    suggestedMax: 10
                 }
             }
+
+        }
+        // this.componentDidUpdate = this.componentDidMount.bind(this)
+        this.generateData = this.generateData.bind(this)
+    }
+
+    componentDidUpdate(){
+        console.log(this.props.data);
+    }
+
+    generateData() {
+        return {
+            labels: ["Red"],
+            datasets: [{
+                label: this.props.label,
+                data: this.props.data,
+                backgroundColor: 'rgb(255,0,255)'
+            }],
         }
     }
+
     render() {
         return (
             <div style={{width: "500px", height: "300px"}}>
-                <Scatter data = {this.demoChartData} options = {this.demoChartOptions}/>
+                {console.log(this.demoChartOptions)}
+                <Scatter data = {this.generateData()} options = {this.demoChartOptions}/>
             </div>
         );
     }
