@@ -30,7 +30,7 @@ class BasicButton extends React.Component {
             <React.Fragment>
                 {this.state.returnedData}
                 <Button variant="primary" onClick={this.click}>
-                    {this.state.button}
+                    {this.props.name}
                 </Button>
             </React.Fragment>
         );
