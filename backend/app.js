@@ -1,5 +1,14 @@
 const express = require("express");
 const app = express();
+require("dotenv").config();
+
+const prisma = require("./utils/prisma");
+const mongoose = require("mongoose");
+
+mongoose.connect(process.env.DATABASE_URL, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 require("express-async-errors");
 const morgan = require("morgan");
