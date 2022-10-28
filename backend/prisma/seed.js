@@ -7,7 +7,7 @@ const csv = require("fast-csv");
 
 async function createGroup(GROUP_ID, GROUP_NAME, readable) {
   readable.pause();
-  await prisma.group.create({
+  await prisma.groups.create({
     data: {
       GROUP_ID: GROUP_ID,
       GROUP_NAME: GROUP_NAME,
@@ -23,13 +23,11 @@ async function createScenario(
   readable
 ) {
   readable.pause();
-  await prisma.scenario.create({
+  await prisma.scenarios.create({
     data: {
       SCENARIO_ID,
       SCENARIO_NAME,
-      AUTHOR_GROUP: {
-        connect: { GROUP_ID: AUTHOR_GROUP_ID },
-      },
+      AUTHOR_GROUP_ID,
     },
   });
   readable.resume();
@@ -40,7 +38,7 @@ async function createNode(SCENARIO_ID, PNODE_NAME, PERIOD_ID, LMP, readable) {
   const period = PERIOD_ID.split(" ");
   const date = new Date(period[0]);
   date.setUTCHours(period[1]);
-  await prisma.node.create({
+  await prisma.nodes.create({
     data: {
       SCENARIO_ID,
       PNODE_NAME,

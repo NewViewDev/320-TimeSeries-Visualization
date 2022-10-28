@@ -25,7 +25,7 @@ model scenarios {
   AUTHOR_GROUP_ID String 
 }
 
-model Group {
+model groups {
   GROUP_ID String @id @map("_id") 
   GROUP_NAME String
 }
