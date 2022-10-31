@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();
 require("dotenv").config();
 
+// const cors = require('cors') //so the frontend can communicate with backend
+// app.use(cors())
 const prisma = require("./utils/prisma");
 const mongoose = require("mongoose");
 
