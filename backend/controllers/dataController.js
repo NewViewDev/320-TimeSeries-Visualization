@@ -25,9 +25,11 @@ exports.getScenarios = async (req, res) => {
 
 exports.getNode = async (req, res) => {
 	console.log(req.query);
+	// extract params from url
 	const { PNODE_NAME, SCENARIO_ID_1, SCENARIO_ID_2, FIELD } = req.query;
 	let nodes;
 
+	// query database based off of params and handle errors
 	try {
 		nodes = await prisma.nodes.findMany({
 			where: {
@@ -49,5 +51,6 @@ exports.getNode = async (req, res) => {
 		});
 	}
 
+	// send data back
 	res.status(StatusCodes.OK).json({ data: { nodes } });
 };
