@@ -2,11 +2,13 @@ import React from "react";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import DropDownTest from "../Components/DropDownTest";
+
+//The Analysis Page
 class AnaylsisPage extends React.Component {
   constructor(props) {
     super(props);
   }
-
+  //currently not function, just dropdowns without any functionality
   render() {
     return(
       <div>
