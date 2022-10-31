@@ -39,6 +39,7 @@ exports.getNode = async (req, res) => {
 			},
 			select: {
 				SCENARIO_ID: true,
+				PERIOD_ID: true,
 				[FIELD]: true,
 			},
 		});
