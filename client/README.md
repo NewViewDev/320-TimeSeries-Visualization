@@ -1,3 +1,44 @@
+Components Folder -- (I didn't delete components just in case they where being in use by someone else, I plan on eventually moving some though)
+    - BasicButton
+        - Basic button that takes in a 
+    - ButtonList //planning on removing
+    - Chart1 //planning on removing since moving to apex
+        - Test Graph, just to see how to display a graph on react
+    - DropDownTest 
+        - For testing dropdowns
+    - DropDownTest2 // planning on removing
+        - the dropdown list customized for SelectingScenario
+        - Since SelectingScenario is being replaced with SelectingScenarioNew, this can be safely removed
+    - MainButton //planning on removing
+        - Testing how to switch pages, but this functionality has been moved to the Navbar
+    - NavbarForWeb
+        - A navbar that transitions between the various pages of the site
+    - SelectingScenario //planning on removing eventually
+        - No longer works due to the changes to the endpoints(this one had used dummy endpoints), 
+        - Did not remove in case anyone was using the component in any way
+        - Instead look at SelectingScenarioNew
+    - SelectingScenarioNew
+        - When the component is mounted, it gets a list of scenarios from the server
+        - Currently SelectingScenarioNew.js has a custom dropdown component inside the file for ease of editing it to function with the SelectingScenarioNew Component, it can be moved out of the file later.
+    - TimeTesting
+        - Currently not in use, but may be needed later
+        - Takes in a user inputted time, and outputs that time in UTC-0
+
+Pages Folder - Contains React Components that makes up the Pages of the website
+    - Anaylsis
+        - The Anaylsis Page will eventually allow the user to select, the scenario, metric, time period, and pnode grouping to run analysis one, showing various metrics based on the user selection(base case 2)
+    - Home
+        - The Landing page will eventually allow the user to sign in?
+    - SanityCheck
+        - The Sanity Check Page will allow the user to select a scenario and a node in the scenario, showing various graphs comparing it to the base case
+            - Currently it gets a list of scenarios from the server and creates a dropdown menu allowing the user to pick a scenario in the list
+            - After Choosing a scenario, it gets a list of nodes from the server and creates a dropdown menu allowing the user to pick a node
+
+App.js
+    - The Website itself
+
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
@@ -68,3 +109,4 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+

@@ -11,6 +11,7 @@ import SelectingScenario from "./Components/SelectingScenario"
 import NavbarForWeb from "./Components/NavbarForWeb";
 import Stack from 'react-bootstrap/Stack'
 import TimeTesting from "./Components/TimeTesting";
+import SelectingScenarioNew from "./Components/SelectingScenarioNew";
 
 let test1 = [1,2,3,4,5,6,7,8];
 let test2 = [1,2,3,4,5,6,9,6];
@@ -20,66 +21,35 @@ class App extends React.Component {
     super(props);
     this.state = { apiResponse: "" };
   }
-
+  //calls API just for testing to make sure that we can contact the server
   callAPI() {
-    fetch("http://localhost:9000/testAPI")
-        .then(res => res.text())
-        .then(res => this.setState({ apiResponse: res }));
-    fetch("http://localhost:9000/scenario/1")
-        .then(res => res.json())
-        .then(res => console.log( res ));
-    fetch("http://localhost:9000/scenario")
-        .then(res => res.json())
-        .then(res => console.log( res ));
+    let toFetch = "http://localhost:4000/api/v1/data/scenarios";
+        fetch(toFetch)
+            .then(res => res.json())
+            .then(res => {
+                let dataArray = res['data']['scenarios']; //the returned value
+                let nameArray = [];
+                let idArray = [];
+                for(let i = 0; i < dataArray.length; i++){
+                    idArray.push(dataArray[i]["SCENARIO_ID"])
+                    nameArray.push(dataArray[i]["SCENARIO_NAME"])
+                    
+                }
+                // console.log(idArray)
+                // console.log(nameArray)
+                this.setState({ 
+                    scenarioList: res,
+                    selectedScenario: "Select Scenario",
+                    loading: false                    
+                })
+            });
   }
 
-  componentWillMount() {//i think componentWillMount is being deprecated, so this so be updated
+  componentWillMount() {//i think componentWillMount is being deprecated, so this so be updated, the call is to make sure the server is alive
       this.callAPI();
   }
 
-  testingData(){
-    let avg1 = 0;
-    let avg2 = 0;
-    avg1 =  test1.forEach((prev, curr) => 
-        prev + curr    
-    , avg1);
-    avg2 =  test2.forEach((prev, curr) => 
-        prev + curr    
-    , avg2);
-    if(avg1 === avg2) {
-        return <h3> Suceeded SanityCheck</h3>
-    }
-    return <h3> failed SanityCheck </h3>
-  }
-
-  render() {
-  //   return(
-  //     <div>
-  //       <NavbarForWeb/>
-  //       <h1>Danity</h1>
-  //       <p className="App-intro">{this.state.apiResponse}</p>
-  //       <div>
-  //         <MainButton 
-  //             startButton = {"GoToAnaylisis"} 
-  //             backButton = {"GoBackToSanityCheck"} 
-  //             unPressedComponent = {() => <div><BasicButton name = "SanityCheck" clickMethod = {this.testingData}/>
-  //                 <TimeTesting calenderDate = "2022-12-03" time = "12:00"/>
-  //               </div>} 
-  //             pressedComponent = {() =>  
-  //                 <div>
-  //                     <ButtonLists name = "hi2"/>
-  //                     <BasicButton name = "testFiltered" clickMethod = {() => <Chart1/>}/>
-  //                     <DropDownTest name = "test" list ={["apple","aae","tim","snake","torn", "ti"]}/>
-  //                     <SelectingScenario list = {["apple","aae","tim","snake","torn", "ti"]} selected = {"apple"}/>
-
-  //                 </div>}
-  //         />
-  //         {/* <ButtonLists buttonList name = "hi"/> */}
-  //         <BasicButton name = "closeProgram" clickMethod = {() => console.log("Under Construction")}/>
-          
-  //       </div>
-  //     </div>
-  //   );
+  render() { //contains the navbar because currently we have no routes, so the navbar is just switching components, instead of actually changing pages
     return(
       <div>
         <NavbarForWeb/>
