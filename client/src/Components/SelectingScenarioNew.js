@@ -2,6 +2,34 @@ import React from "react";
 import BasicButton from "./BasicButton";
 import Dropdown from 'react-bootstrap/Dropdown'
 import Spinner from 'react-bootstrap/Spinner';
+import Button from 'react-bootstrap/Button';
+import ScatterLMP from "./GraphFolder/ScatterLMP";
+import HistogramTest from "./GraphFolder/HistogramTest";
+
+function manageData(arr){
+    let dataMap = new Map();
+    for(let i = 0; i < arr.length; i++){
+        let currNode = arr[i];
+        let scenarioID = currNode["SCENARIO_ID"];
+        let periodID = currNode["PERIOD_ID"];
+        if (dataMap.get(periodID) === undefined) {
+            let arr = [currNode["LMP"]]
+            dataMap.set(periodID, arr)
+        } else {            
+            dataMap.get(periodID).push(currNode["LMP"])
+        }
+    }
+    let data = [];
+    let dataIterator = dataMap.values();
+    let dataEntry = dataIterator.next();
+    while(!dataEntry.done) {
+        data.push(dataEntry.value)
+        dataEntry = dataIterator.next();
+    }
+    // console.log(data)
+}
+
+
 
 function rangeOf(start, end){//creates an array from range start to end(exclusive for end) ex: rangeOf(1,4) => [1, 2, 3]
     let newArray = new Array(end-start);
@@ -137,6 +165,10 @@ class SelectingScenarioNew extends React.Component {//manages the various compon
             apiResponse: "",
             loadingScenario: true, //this is used so we know when we have finished recieving the data from the server
 
+            //different from selected because until the user hits the submit button, we don't know if 
+            actualScenario: -1, //the index of the actual scenario value we are usingin the list of scenarios
+            actualBase: -1, //the index of the actual base case value we are using in the list of scenarios
+
             nodeList: [], //the list of nodes
             selectedNode: -1, //the index of the selected value in the list for nodes
             loadingNode: true, //this is used so we know when we have finished recieving the data from the server
@@ -150,7 +182,8 @@ class SelectingScenarioNew extends React.Component {//manages the various compon
         this.getScenario = this.getScenario.bind(this);
         this.apiResponse = this.apiResponse.bind(this);
         this.getNode = this.getNode.bind(this);
-        console.log(this.selectScenario)
+        this.getInfo = this.getInfo.bind(this);
+        // console.log(this.selectScenario)
     }
     
     componentDidMount() { //when we mount the component we get the list of scenarios
@@ -169,8 +202,8 @@ class SelectingScenarioNew extends React.Component {//manages the various compon
                     idArray.push(dataArray[i]["SCENARIO_ID"])
                     nameArray.push(dataArray[i]["SCENARIO_NAME"])
                 }
-                console.log(idArray)
-                console.log(nameArray)
+                // console.log(idArray)
+                // console.log(nameArray)
                 this.setState({ 
                     scenarioList: idArray,
                     scenarioNameList: nameArray,
@@ -179,14 +212,15 @@ class SelectingScenarioNew extends React.Component {//manages the various compon
             });
     }
 
-    getNode() { //calls the server to get the scenario
+    getNode() { //calls the server to get the list of nodes
         let toFetch = "http://localhost:4000/api/v1/data/nodes/name";
         fetch(toFetch)
             .then(res => res.json()) //converts to json
             .then(res => {
                 let dataArray = res['data']['nodes']; //the returned value, which is a array of nodeIds
-                console.log(dataArray)
+                // console.log(dataArray)
                 this.setState({ 
+                    apiResponse: "",
                     clicked: false,
                     nodeList: dataArray,
                     loadingNode: false //tells the system we finished getting the data from the database                    
@@ -194,18 +228,38 @@ class SelectingScenarioNew extends React.Component {//manages the various compon
             });
     }
 
+    getInfo() {
+        if(this.state.selectedNode != -1){
+            let toFetch = "http://localhost:4000/api/v1/data/nodes";
+            toFetch += "?PNODE_NAME="+this.state.nodeList[this.state.selectedNode]+"&SCENARIO_ID_1="+this.state.scenarioList[this.state.actualScenario]+"&SCENARIO_ID_2="+this.state.scenarioList[this.state.actualBase]+"&FIELD=LMP"
+            fetch(toFetch)
+                .then(res => res.json()) //converts to json
+                .then(res => {
+                    // console.log(res)
+                    manageData(res["data"]["nodes"])
+                    this.setState({ 
+                        apiResponse: 
+                            <div>
+                                <ScatterLMP data = {res["data"]["nodes"]}/>  
+                                <HistogramTest data = {res["data"]["nodes"]}/>   
+                            </div>   
+                    })
+                });
+        }
+    }
+
     selectScenario(index) { //updates the selectedScenario's index, passed onto dropdown list, so that those buttons can update the selectedScenario based on the button they press
         this.setState(prevState => ({
             selectedScenario: index
         }));
-        console.log("currentIndex: " + index);
+        // console.log("currentIndex: " + index);
     }
 
     selectBase(index) { //updates the selectedBaseCase's index, passed onto dropdown list, so that those buttons can update the selectedBaseCase based on the button they press
         this.setState(prevState => ({
             selectedBaseCase: index
         }));
-        console.log("currentIndex: " + index);
+        // console.log("currentIndex: " + index);
     }
 
     selectNode(index){ //updates the selectedBaseCase's index, passed onto dropdown list, so that those buttons can update the selectedBaseCase based on the button they press
@@ -215,15 +269,17 @@ class SelectingScenarioNew extends React.Component {//manages the various compon
     }
 
     callAPI() { //After selecting a scenario, a user is able to press the submit button in which we get the node
-        if(this.state.selectedScenario != -1) {
+        //the first if exist so that nothing happens when a scenario and base case isn't selected, also does nothing in the event that neither of the states have changed
+        if(this.state.selectedScenario != -1 && this.state.selectedBaseCase != -1 && (this.state.selectedBaseCase != this.state.actualBase || this.state.selectedScenario != this.state.actualScenario)) {
             this.getNode(); //gets the list of nodes
             this.setState((prevState) =>
                 {
                     return {
+                        actualBase: prevState.selectedBaseCase,
+                        actualScenario: prevState.selectedScenario,
                         clicked: true,
                         selectedNode: -1,
                         loadingNode: true,
-                        apiResponse: this.state.scenarioList[prevState.selectedScenario] + " " + this.state.scenarioList[prevState.selectedBaseCase]
                     }
                 }
             )        
@@ -240,8 +296,17 @@ class SelectingScenarioNew extends React.Component {//manages the various compon
                 }
                 {!this.state.clicked && !this.state.loadingNode && //displays a dropdown menu with the list of nodes, after we recieved the info from the server
                     <>
+                        {/* current logic needs to be updated */}
+                        <h1> Base:{this.state.scenarioNameList[this.state.actualBase]} | Scenario:{this.state.scenarioNameList[this.state.actualScenario]} </h1>
+                        <div className = 'col-md-auto '>
+                            <ScenarioDropDown name = "Select Node" index = {this.state.selectedNode} list = {this.state.nodeList} func = {this.selectNode}/>
+                        </div>
+                        <div className = 'col-md-auto '>
+                            <Button variant="primary" onClick={this.getInfo}>
+                                Submit
+                            </Button>
+                        </div>
                         {this.state.apiResponse}
-                        <ScenarioDropDown name = "Select Node" index = {this.state.selectedNode} list = {this.state.nodeList} func = {this.selectNode}/>
                     </>
                 }
             </div>
@@ -272,6 +337,7 @@ class SelectingScenarioNew extends React.Component {//manages the various compon
                                 this.callAPI()
                             }}/>
                         <this.apiResponse/>
+                        
                         </div>
                     </div>
                 }
@@ -281,4 +347,6 @@ class SelectingScenarioNew extends React.Component {//manages the various compon
         );
     }
 }
+
+
 export default SelectingScenarioNew;
