@@ -20,9 +20,13 @@ Components Folder -- (I didn't delete components just in case they where being i
     - SelectingScenarioNew
         - When the component is mounted, it gets a list of scenarios from the server
         - Currently SelectingScenarioNew.js has a custom dropdown component inside the file for ease of editing it to function with the SelectingScenarioNew Component, it can be moved out of the file later.
+        - Currently this component also handles the node dropdown, but this entire component should probably be split into multiple smaller components
     - TimeTesting
         - Currently not in use, but may be needed later
         - Takes in a user inputted time, and outputs that time in UTC-0
+    - GraphFolder - Contains the implmentation for the graphs needed for usecase #1
+        -HistogramTest - Implements the Histogram from use case 1
+        -ScatterLMP - Implements the Scatter plot from use case 1
 
 Pages Folder - Contains React Components that makes up the Pages of the website
     - Anaylsis
