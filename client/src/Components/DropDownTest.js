@@ -31,6 +31,7 @@ class DropDownTest extends React.Component {//the number of items following is v
             <li key = {number}>{
                 <Dropdown.Item as = "button" onClick={() => {
                     this.setSelect(number)
+                    this.props.func(this.state.button)
                 }}>
                     {number}
                 </Dropdown.Item>
@@ -76,15 +77,18 @@ class DropDownTest extends React.Component {//the number of items following is v
     }
 
     printTest(){
-        console.log("Update");
+        //console.log("Update");
     }
+
+    // Returns the current selected "name" of the button
+    /*getName() {
+        console.log("2" + this.state.button);
+    }*/
 
     handleSubmit(event) {
         console.log("HI");
         event.preventDefault();
-        this.setState({
-            button: this.state.filterList[0]
-        })
+        this.props.func(this.state.button);
     }
 
     handleChange(event) {

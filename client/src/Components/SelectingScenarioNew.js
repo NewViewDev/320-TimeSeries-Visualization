@@ -198,7 +198,7 @@ class SelectingScenarioNew extends React.Component {//manages the various compon
         this.setState(prevState => ({
             selectedScenario: index
         }));
-        console.log("currentIndex: " + index);
+        //console.log("currentIndex: " + index);
     }
 
     selectBase(index) { //updates the selectedBaseCase's index, passed onto dropdown list, so that those buttons can update the selectedBaseCase based on the button they press
