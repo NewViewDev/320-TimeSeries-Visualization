@@ -3,8 +3,7 @@ import BasicButton from "./BasicButton";
 import Dropdown from 'react-bootstrap/Dropdown'
 import Spinner from 'react-bootstrap/Spinner';
 import Button from 'react-bootstrap/Button';
-import ScatterLMP from "./GraphFolder/ScatterLMP";
-import HistogramTest from "./GraphFolder/HistogramTest";
+import GraphManager from "./GraphManager";
 
 function manageData(arr){
     let dataMap = new Map();
@@ -173,7 +172,9 @@ class SelectingScenarioNew extends React.Component {//manages the various compon
             selectedNode: -1, //the index of the selected value in the list for nodes
             loadingNode: true, //this is used so we know when we have finished recieving the data from the server
             clicked: false, //the node dropdown should only show up after the user pressed submit for their chosen scenario
-            prev: <></>
+            prev: <></>,
+
+            loadingGraph: false,
         }
         this.selectScenario = this.selectScenario.bind(this);
         this.selectBase = this.selectBase.bind(this);
@@ -229,19 +230,26 @@ class SelectingScenarioNew extends React.Component {//manages the various compon
     }
 
     getInfo() {
+        this.setState({
+            loadingGraph: true,
+        })
         if(this.state.selectedNode != -1){
             let toFetch = "http://localhost:4000/api/v1/data/nodes";
             toFetch += "?PNODE_NAME="+this.state.nodeList[this.state.selectedNode]+"&SCENARIO_ID_1="+this.state.scenarioList[this.state.actualScenario]+"&SCENARIO_ID_2="+this.state.scenarioList[this.state.actualBase]+"&FIELD=LMP"
+            // console.log(toFetch);
+            let selectedScenario = this.state.scenarioList[this.state.actualScenario];
+            let selectedBase = this.state.scenarioList[this.state.actualBase];
             fetch(toFetch)
                 .then(res => res.json()) //converts to json
                 .then(res => {
                     // console.log(res)
                     manageData(res["data"]["nodes"])
+                    console.log(res["data"]["nodes"]);
                     this.setState({ 
+                        loadingGraph: false,
                         apiResponse: 
                             <div>
-                                <ScatterLMP data = {res["data"]["nodes"]}/>  
-                                <HistogramTest data = {res["data"]["nodes"]}/>   
+                                <GraphManager data = {res["data"]["nodes"]} baseCase = {selectedBase} scenario = {selectedScenario}/> 
                             </div>   
                     })
                 });
@@ -288,7 +296,7 @@ class SelectingScenarioNew extends React.Component {//manages the various compon
 
     apiResponse() {//designed so that we only return the elements if the user clicked on submit and the program had finish getting the list of nodes from the server
         return (
-            <div className = 'row g-2'>
+            <div>
                 {this.state.clicked && this.state.loadingNode && //when we are loading, it displays a loading spinner
                     <Spinner animation="border" role="status">
                         <span className="visually-hidden">Loading...</span>
@@ -297,16 +305,33 @@ class SelectingScenarioNew extends React.Component {//manages the various compon
                 {!this.state.clicked && !this.state.loadingNode && //displays a dropdown menu with the list of nodes, after we recieved the info from the server
                     <>
                         {/* current logic needs to be updated */}
-                        <h1> Base:{this.state.scenarioNameList[this.state.actualBase]} | Scenario:{this.state.scenarioNameList[this.state.actualScenario]} </h1>
-                        <div className = 'col-md-auto '>
-                            <ScenarioDropDown name = "Select Node" index = {this.state.selectedNode} list = {this.state.nodeList} func = {this.selectNode}/>
+                        <div className = 'row g-1'>
+                            <h1> Base:{this.state.scenarioNameList[this.state.actualBase]} | Scenario:{this.state.scenarioNameList[this.state.actualScenario]} </h1>
                         </div>
-                        <div className = 'col-md-auto '>
-                            <Button variant="primary" onClick={this.getInfo}>
-                                Submit
-                            </Button>
+                        <div className = 'row g-2'>
+                            <div className = 'col-md-auto'>
+                                <ScenarioDropDown name = "Select Node" index = {this.state.selectedNode} list = {this.state.nodeList} func = {this.selectNode}/>
+                            </div>
+                            <div className = 'col-md-auto'>
+                                <Button variant="primary" onClick={this.getInfo}>
+                                    Submit
+                                </Button>
+                            </div>
+                            <div className = 'row g-2'>
+                                <div className = 'col-md-auto'>
+                                    {this.state.loadingGraph == true &&
+                                        <Spinner animation="border" role="status">
+                                        <span className="visually-hidden">Loading...</span>
+                                        </Spinner>
+                                    } {this.state.loadingGraph == false &&
+                                        <div>
+                                            {this.state.apiResponse}
+                                        </div>
+                                    } 
+                                    
+                                </div>
+                            </div>
                         </div>
-                        {this.state.apiResponse}
                     </>
                 }
             </div>
@@ -325,7 +350,7 @@ class SelectingScenarioNew extends React.Component {//manages the various compon
                 {!this.state.loadingScenario && //when we are not loading it produces the acutal result, which is a dropdown of scenarios
                     <div className ='row g-0'>
                         <div>Scenario:</div>
-
+                        <div>{this.state.scenarioNameList[this.state.selectedScenario]}</div>
                         <div className = 'col-md-auto '>
                             <ScenarioDropDown name = "Select Scenario" index = {this.state.selectedScenario} list = {this.state.scenarioNameList} func = {this.selectScenario}/>
                         </div>
