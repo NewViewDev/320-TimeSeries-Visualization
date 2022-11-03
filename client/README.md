@@ -27,6 +27,7 @@ Components Folder -- (I didn't delete components just in case they where being i
     - GraphFolder - Contains the implmentation for the graphs needed for usecase #1
         -HistogramTest - Implements the Histogram from use case 1
         -ScatterLMP - Implements the Scatter plot from use case 1
+        -HeatmapMonthly - Implements the Heatmap plot for use case 1
 
 Pages Folder - Contains React Components that makes up the Pages of the website
     - Anaylsis
