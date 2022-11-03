@@ -40,6 +40,9 @@ class ScatterLMP extends React.Component{
                     zoom: {
                         enabled: true,
                         type: 'xy'
+                    },
+                    animations: {
+                        enabled: false,
                     }
                 },
                 xaxis: {
@@ -77,10 +80,12 @@ class ScatterLMP extends React.Component{
                 zoom: {
                     enabled: true,
                     type: 'xy'
-                }
+                },
+                // animations: {
+                //     enabled: false,
+                // }
             },
             xaxis: {
-
                 labels: {
                     formatter: function(val) {
                         return parseFloat(val).toFixed(2)
