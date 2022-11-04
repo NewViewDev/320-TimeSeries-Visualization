@@ -1,0 +1,14 @@
+.button {
+    transform: translateY(0);
+    box-shadow: 0px 0px 0px #0005;
+    transition: all .2s;
+    width: fit-content;
+}
+.button:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 5px 5px #0005;
+}
+.button:active{ 
+    transform: translateY(0px);
+    box-shadow: 0px 0px 0px #0005;
+}
