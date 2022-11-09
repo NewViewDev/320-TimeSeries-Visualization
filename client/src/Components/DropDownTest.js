@@ -31,7 +31,11 @@ class DropDownTest extends React.Component {//the number of items following is v
             <li key = {number}>{
                 <Dropdown.Item as = "button" onClick={() => {
                     this.setSelect(number)
-                    this.props.func(this.state.button)
+
+                    // Calls the function passed to this button
+                    // number:  current selected text in the list
+                    // this.props.name:  original button name
+                    this.props.func(number, this.props.name)
                 }}>
                     {number}
                 </Dropdown.Item>
@@ -85,10 +89,13 @@ class DropDownTest extends React.Component {//the number of items following is v
         console.log("2" + this.state.button);
     }*/
 
+    // Theoretically should call mangeList function;
+    // then when user hits "enter" the needed information is updated
+    // Doesn't seem to be working (hitting "enter" doesn't select anything)
     handleSubmit(event) {
-        console.log("HI");
+        //console.log("HI");
         event.preventDefault();
-        this.props.func(this.state.button);
+        this.manageList();
     }
 
     handleChange(event) {
