@@ -1,0 +1,20 @@
+.input, .button, .dropdown {
+    font-size: 15px;
+    padding: 10px 15px;
+    border-radius: 10000px;
+    background: #20303B;
+    color: white;
+}
+.button, .dropdown {
+    cursor: pointer;
+}
+
+.input {
+    border: none;
+    outline: none;
+    transition: background-color .25s;
+    background-color: #30404B;
+}
+.input:focus {
+    background-color: #20303B;
+}

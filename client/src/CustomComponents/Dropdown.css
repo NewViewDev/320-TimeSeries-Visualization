@@ -1,0 +1,60 @@
+.dropdown {
+    position: relative;
+    width: fit-content;
+    padding-right: 2.5em;
+}
+
+.dropdown::after {
+    content: '▼';
+    position: absolute;
+    color: inherit;
+    top: 50%;
+    right: 1em;
+    transform: translateY(-50%) rotate(90deg);
+    transition: all .5s;
+}
+.dropdown:hover::after {
+    transform: translateY(-50%) rotate(0deg);
+}
+.dropdown.open::after {
+    transform: translateY(-50%) rotate(0deg);
+}
+.dropdown > .search {
+    background: none;
+    border: none;
+    outline: none;
+    color: white;
+}
+
+.selection {
+    display: none;
+}
+.options {
+    position: absolute;
+    top: 100%;
+    min-width: 100%;
+    background: white;
+    color: black !important;
+    left: 0;
+    border-radius: 15px;
+    overflow: hidden;
+    opacity: 0;
+    transition: all .2s;
+    transform: translateY(-5px);
+    pointer-events: none;
+}
+.options.open {
+    opacity: 100%;
+    transform: translateY(0px);
+    pointer-events: all;
+}
+.options > div {
+    background: #0000;
+    transition: all .2s;
+    width: 100%;
+    margin: 0px;
+    padding: 3px 10px;
+}
+.options > div:hover {
+    background: #0002;
+}
