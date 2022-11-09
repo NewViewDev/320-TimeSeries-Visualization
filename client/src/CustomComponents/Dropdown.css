@@ -1,10 +1,11 @@
 .dropdown {
     position: relative;
     width: fit-content;
+    min-width: 100px;
     padding-right: 2.5em;
 }
 
-.dropdown::after {
+.dropdown::before {
     content: '▼';
     position: absolute;
     color: inherit;
@@ -13,17 +14,37 @@
     transform: translateY(-50%) rotate(90deg);
     transition: all .5s;
 }
-.dropdown:hover::after {
+.dropdown:hover::before {
+    transform: translateY(-50%) rotate(0deg);
+}
+.dropdown.open::before {
     transform: translateY(-50%) rotate(0deg);
 }
 .dropdown.open::after {
-    transform: translateY(-50%) rotate(0deg);
+    content: '|';
+    /* content: '';
+    position: relative;
+    width: 1px;
+    height: 1em;
+    border: 0 0 .5em 0 solid black;
+    background: white;
+    display: inline-block; */
+    animation: flicker 1s infinite;
 }
-.dropdown > .search {
-    background: none;
-    border: none;
-    outline: none;
-    color: white;
+
+@keyframes flicker{
+    0% {
+        opacity: 100%;
+    }
+    49% {
+        opacity: 100%;
+    }
+    50% {
+        opacity: 0%;
+    }
+    99% {
+        opacity: 0%;
+    }
 }
 
 .selection {
@@ -42,6 +63,7 @@
     transition: all .2s;
     transform: translateY(-5px);
     pointer-events: none;
+    z-index: 10000000;
 }
 .options.open {
     opacity: 100%;
