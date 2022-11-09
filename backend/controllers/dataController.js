@@ -39,6 +39,14 @@ exports.getNode = async (req, res) => {
 					{ SCENARIO_ID: SCENARIO_ID_2 },
 				],
 			},
+			orderBy: [
+				{
+					SCENARIO_ID: "asc",
+				},
+				{
+					PERIOD_ID: "asc",
+				},
+			],
 			select: {
 				SCENARIO_ID: true,
 				PERIOD_ID: true,
