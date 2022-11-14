@@ -20,7 +20,7 @@
 .dropdown.open::before {
     transform: translateY(-50%) rotate(0deg);
 }
-.dropdown.open::after {
+.dropdown-search.open::after {
     content: '|';
     /* content: '';
     position: relative;

@@ -1,0 +1,25 @@
+Colors:
+Grey        #D9D9D9
+White       #FFFFFF
+Black       #000000
+Dark Blue   #20303B
+Light Blue  #4A5E67
+Action Blue #607A86
+
+Button
+Dropdown
+Input
+
+Navbar
+- NavElement
+    height: 100%
+    no margin, only padding
+    not fixed width
+- NavButton
+    hover: color 
+
+Container
+  position relative
+
+Properties for all
+- Color

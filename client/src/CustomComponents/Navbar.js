@@ -10,8 +10,7 @@ class Navbar extends React.Component {
         return (
             <>
                 <div className="navbar" style={{height: this.props.height ? this.props.height : '80px'}}>
-                    {/* {this.props.children} */}
-                    <NavbarButton>Hello!</NavbarButton>
+                    {this.props.children}
                 </div>
                 <div style={{height: this.props.height ? this.props.height : '80px'}}></div>
             </>
