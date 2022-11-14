@@ -41,6 +41,7 @@ function manageData(arr){
             dataMap.set(scenarioID, arr)
         } else {            
             dataMap.get(scenarioID).push(value)
+            
         }
         if(value <= min){
             min = value;
@@ -49,6 +50,7 @@ function manageData(arr){
             max = value;
         }
     }
+    
     //We iterate through the list of LMPs and put the results in an array called data, so data[0] has the list of LMPs for one and data[1] has the list of LMPs for the other
     let data = [];
     let dataIterator = dataMap.values();

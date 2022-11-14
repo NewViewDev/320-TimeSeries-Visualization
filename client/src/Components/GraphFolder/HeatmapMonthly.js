@@ -61,8 +61,8 @@ function manageData(arr, baseCase, scenario){//takes the data recieved from the 
         let dataScen = data[0];
         let MAPE = Math.abs((dataBase - dataScen)/dataScen);
         let currDate = new Date(value);
-        let hour = currDate.getUTCHours();
-        let month = currDate.getUTCMonth();
+        let hour = currDate.getHours();
+        let month = currDate.getMonth();
         if(hour == 0) {
             if(currDate.getUTCDate() == 1){
                 month -= 1;

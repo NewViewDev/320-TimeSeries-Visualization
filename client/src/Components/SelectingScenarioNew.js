@@ -317,7 +317,7 @@ class SelectingScenarioNew extends React.Component {//manages the various compon
                                     Submit
                                 </Button>
                             </div>
-                            <div className = 'row g-2'>
+                            <div className = 'row g-3'>
                                 <div className = 'col-md-auto'>
                                     {this.state.loadingGraph == true &&
                                         <Spinner animation="border" role="status">
@@ -348,23 +348,28 @@ class SelectingScenarioNew extends React.Component {//manages the various compon
                     </Spinner>
                 }
                 {!this.state.loadingScenario && //when we are not loading it produces the acutal result, which is a dropdown of scenarios
-                    <div className ='row g-0'>
-                        <div>Scenario:</div>
-                        <div>{this.state.scenarioNameList[this.state.selectedScenario]}</div>
-                        <div className = 'col-md-auto '>
-                            <ScenarioDropDown name = "Select Scenario" index = {this.state.selectedScenario} list = {this.state.scenarioNameList} func = {this.selectScenario}/>
+                    <>
+                        <div className ='row g-0'>
+                            <div>Scenario:</div>
+                            <div>{this.state.scenarioNameList[this.state.selectedScenario]}</div>
+                            <div className = 'col-md-auto '>
+                                <ScenarioDropDown name = "Select Scenario" index = {this.state.selectedScenario} list = {this.state.scenarioNameList} func = {this.selectScenario}/>
+                            </div>
+                            <div className = 'col-md-auto '>
+                                <ScenarioDropDown name = "Select BaseCase" index = {this.state.selectedBaseCase} list = {this.state.scenarioNameList} func = {this.selectBase}/>
+                            </div>
+                            <div className = 'col-md-auto'>
+                                <BasicButton name = {"Check"} clickMethod = {() => {
+                                    this.callAPI()
+                                }}/>
+                            
+                            
+                            </div>
                         </div>
-                        <div className = 'col-md-auto '>
-                            <ScenarioDropDown name = "Select BaseCase" index = {this.state.selectedBaseCase} list = {this.state.scenarioNameList} func = {this.selectBase}/>
+                        <div>
+                            <this.apiResponse/>
                         </div>
-                        <div className = 'col-md-auto'>
-                            <BasicButton name = {"Check"} clickMethod = {() => {
-                                this.callAPI()
-                            }}/>
-                        <this.apiResponse/>
-                        
-                        </div>
-                    </div>
+                    </>
                 }
 
             </div>

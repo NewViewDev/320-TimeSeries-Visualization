@@ -2,6 +2,7 @@ import React from "react";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import DemoForDropdownUpdatingImmediately from "../Components/DemoForDropdownUpdatingImmediately";
+import TimeSeriesLinePlot from "../Components/GraphFolder/TimeSeriesLinePlot";
 
 class Home extends React.Component {
   constructor(props) {
@@ -32,6 +33,7 @@ class Home extends React.Component {
         <h1>Danity</h1>
         <p className="App-intro">{this.state.apiResponse}</p>
         <DemoForDropdownUpdatingImmediately/>
+        {/* <TimeSeriesLinePlot/> */}
         
       </div>
     );

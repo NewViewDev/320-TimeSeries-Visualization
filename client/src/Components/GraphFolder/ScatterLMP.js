@@ -3,6 +3,7 @@ import Chart from "react-apexcharts"
 
 function manageData(arr){//takes the data recieved from the server and makes it into a form usuable by graphs
     //First we have connect the data from base and scenario since scatter plot is comparing lmp between the base and scenario
+    let startTime = Date.now();
     let dataMap = new Map();
     for(let i = 0; i < arr.length; i++){
         let currNode = arr[i];
@@ -25,6 +26,11 @@ function manageData(arr){//takes the data recieved from the server and makes it 
         data.push(dataEntry.value)
         dataEntry = dataIterator.next();
     }
+    console.log("TIME For Managing Data")
+    console.log(Date.now() - startTime + "ms")
+    console.log("Start: " + startTime + "EndTime: " + Date.now())
+
+    console.log(data.length)
     return data;
 }
 
@@ -42,11 +48,15 @@ class ScatterLMP extends React.Component{
                         type: 'xy'
                     },
                     animations: {
-                        enabled: false,
+                        enabled: true,
                     }
                 },
+                markers:{
+                    size:0,
+                },
                 xaxis: {
-    
+                    min: 0,
+                    tickAmount: 10,
                     labels: {
                         formatter: function(val) {
                             return parseFloat(val).toFixed(2)
@@ -78,14 +88,17 @@ class ScatterLMP extends React.Component{
             chart: {
                 type: 'scatter',
                 zoom: {
-                    enabled: true,
+                    enabled: false,
                     type: 'xy'
                 },
-                // animations: {
-                //     enabled: false,
-                // }
+                
+                animations: {
+                    enabled: true,
+                }
+                
             },
             xaxis: {
+                tickAmount: 10,
                 labels: {
                     formatter: function(val) {
                         return parseFloat(val).toFixed(2)
@@ -101,7 +114,7 @@ class ScatterLMP extends React.Component{
     render(){
         return (
             <div>
-                <Chart options={this.generateOptions()} series={this.generateSeries()} type="scatter" height = "400" width = "400"/>
+                <Chart options={this.generateOptions()} series={this.generateSeries()} type="scatter" height = "600" width = "600"/>
             </div>
         )
     }

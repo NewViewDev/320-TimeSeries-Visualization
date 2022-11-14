@@ -8,6 +8,7 @@ import Nav from 'react-bootstrap/Nav'
 import ScatterLMP from "./GraphFolder/ScatterLMP";
 import HistogramTest from "./GraphFolder/HistogramTest";
 import HeatmapMonthly from "./GraphFolder/HeatmapMonthly";
+import TimeSeriesLinePlot from "./GraphFolder/TimeSeriesLinePlot";
 
 class GraphManager extends React.Component {
     
@@ -29,7 +30,12 @@ class GraphManager extends React.Component {
         let key = this.state.currPage
         switch (key) {
             case 0:
-                return <ScatterLMP data = {this.props.data}/>   //The initial page, in Home.js
+                // let startTime = Date.now();
+                // let ScatterTest = <ScatterLMP data = {this.props.data}/>;
+                // console.log("HI");
+                // console.log("Time Elapsed for Whole:" + (Date.now() - startTime));
+                // return ScatterTest  //The initial page, in Home.js
+                return <TimeSeriesLinePlot data = {this.props.data}/>
             case 1:
                 return <HistogramTest data = {this.props.data}/>   //The Sanity Check page, in SanityCheck.js
             case 2:
