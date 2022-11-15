@@ -33,7 +33,7 @@ class App extends React.Component {
                 <NavButton onClick={() => {this.setPage(1)}}>Sanity Check</NavButton>
                 <NavButton onClick={() => {this.setPage(2)}}>Analysis</NavButton>
                 <NavElement float="right">
-                    <Dropdown className="dark" list={[['home', () => {this.setPage(0)}]]}>Profile</Dropdown>
+                    <Dropdown className="dark" list={[['Logout', () => {this.setPage(0)}]]}>Profile</Dropdown>
                 </NavElement>
             </Navbar>
             {this.state.page === 0 && <LoginPage></LoginPage>}
