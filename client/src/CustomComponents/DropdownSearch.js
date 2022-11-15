@@ -2,13 +2,16 @@ import React from "react";
 import './Dropdown.css'
 import './Input.css'
 
-class Dropdown extends React.Component {
+class DropdownSearch extends React.Component {
+    static id = 0;
     constructor(props) {
         super(props);
-        this.state = {value: false, open: false, search: ''}
+        this.state = {value: false, open: false, search: '', id: "dropdown-search-" + DropdownSearch.id}
         this.drop = this.drop.bind(this);
         this.select = this.select.bind(this);
         this.search = this.search.bind(this);
+        this.close = this.close.bind(this);
+        DropdownSearch.id++;
     }
     drop() {
         this.setState({open: !this.state.open, search: ''});
@@ -28,17 +31,24 @@ class Dropdown extends React.Component {
             this.props.onSelect(value);
         }
     }
+    close(event) {
+        if(event.target.id !== this.state.id) {
+            this.setState({open: false, search: ''});
+        }
+    }
     componentDidMount() {
         window.addEventListener('keydown', this.search)
+        window.addEventListener('click', this.close)
     }
     componentWillUnmount() {
         window.removeEventListener('keydown', this.search)
+        window.removeEventListener('click', this.close)
     }
     render() {
         return (
             <>
                 <input readOnly value={this.state.value ? this.state.value : ""} className="selection"/>
-                <div className={"dropdown dropdown-search" + (this.state.open ? " open" : "") + " " + this.props.className} onClick={this.drop}>
+                <div id={this.state.id} className={"dropdown dropdown-search" + (this.state.open ? " open" : "") + " " + this.props.className} onClick={this.drop}>
                     <div style={{position: "absolute", color: "#fff5"}}>{this.state.value && this.state.search === '' ? this.state.value : ''}</div>
                     {this.state.open ? this.state.search : (this.state.value ? this.state.value : this.props.children)}
                     
@@ -58,4 +68,4 @@ class Dropdown extends React.Component {
     }
 }
 
-export default Dropdown;
+export default DropdownSearch;
