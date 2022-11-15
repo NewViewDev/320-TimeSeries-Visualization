@@ -35,23 +35,45 @@ exports.getScenarios = async (req, res) => {
 // Get data points for specified node with two scenarios
 exports.getNode = async (req, res) => {
   // extract params from url
-  const { PNODE_NAME, SCENARIO_ID_1, SCENARIO_ID_2, FIELD } = req.query;
+  let {
+    PNODE_NAME,
+    SCENARIO_ID_1,
+    SCENARIO_ID_2,
+    START_DATE,
+    END_DATE,
+    FIELD,
+  } = req.query;
   let nodes;
 
   if (!PNODE_NAME || !SCENARIO_ID_1 || !SCENARIO_ID_2 || !FIELD) {
     throw new BadRequestError("Please provide all values");
   }
 
+  START_DATE = new Date(START_DATE);
+  END_DATE = new Date(END_DATE);
+  START_DATE.setUTCHours(0);
+  END_DATE.setUTCHours(0);
+
   nodes = await prisma.nodes.findMany({
     where: {
       PNODE_NAME: PNODE_NAME,
       OR: [{ SCENARIO_ID: SCENARIO_ID_1 }, { SCENARIO_ID: SCENARIO_ID_2 }],
+      PERIOD_ID: {
+        gte: START_DATE,
+        lte: END_DATE,
+      },
     },
     select: {
       SCENARIO_ID: true,
       PERIOD_ID: true,
       [FIELD]: true,
     },
+    orderBy: [
+      {
+        SCENARIO_ID: "asc",
+      },
+      { LMP: "asc" },
+    ],
   });
 
   if (nodes.length == 0) {
