@@ -3,11 +3,10 @@
     position: relative;
     background: #20303B;
     color: white;
-    height: 100%;
     width: 100%;
     box-sizing: border-box;
 }
 .container.light {
-    color: black;
-    background: white;
+    color: black !important;
+    background: white !important;
 }
