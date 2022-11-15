@@ -42,9 +42,8 @@ class Dropdown extends React.Component {
                     <div className={"options " + (this.state.open ? "open" : "")}>
                         {this.props.list.map((option, i) => {
                             return <div key={i} onClick={() => {
-                                if(!option[1]) this.select(option[0]);
-                                else option[1]();
-                            }}>{option[0]}</div>;
+                                this.select(option);
+                            }}>{option}</div>;
                         })}
                     </div>
                 </div>

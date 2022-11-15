@@ -14,7 +14,7 @@
     height: 150%;
 }
 .navbar-button {
-    transition: all .5s;
+    transition: all .25s;
     cursor: pointer;
 }
 .navbar-button:hover {

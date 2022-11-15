@@ -33,7 +33,7 @@ class App extends React.Component {
                 <NavButton onClick={() => {this.setPage(1)}} active={this.state.page === 1}>Sanity Check</NavButton>
                 <NavButton onClick={() => {this.setPage(2)}} active={this.state.page === 2}>Analysis</NavButton>
                 <NavElement float="right">
-                    <Dropdown className="dark" list={[['Logout', () => {this.setPage(0)}]]}>Profile</Dropdown>
+                    <Dropdown onSelect={() => {this.setPage(0)}} className="dark" list={['Logout']}>Profile</Dropdown>
                 </NavElement>
             </Navbar>
             {/* This may want to decide visibility instead of rendering to save current states; in other words, have the conditional affect the styling of the pages rather than whether or not to render them */}
