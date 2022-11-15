@@ -1,5 +1,6 @@
 import React from "react"; 
 import Dropdown from "../CustomComponents/DropdownSearch";
+import DatabaseDropdown from "../Components/DatabaseDropdown";
 import Container from "../CustomComponents/Container";
 import Button from "../CustomComponents/Button";
 import Navbar from "../CustomComponents/Navbar";
@@ -19,7 +20,7 @@ class SanityCheckPage extends React.Component {
   render() {
     return(
       <>
-        <Dropdown list={[]}>Select Scenario</Dropdown>
+        <DatabaseDropdown fetch="http://localhost:9000/scenario/">Select Scenario</DatabaseDropdown>
         <Button className="action">Check</Button>
         <br/><br/>
         <Container className="light">

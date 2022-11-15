@@ -26,7 +26,11 @@ class DropdownSearch extends React.Component {
         }
     }
     select(value) {
-        this.setState({value: value, open: false, search: ''});
+        if(this.props.noSelect) {
+            this.setState({open: false, search: ''});
+        } else {
+            this.setState({value: value, open: false, search: ''});
+        }
         if(this.props.onSelect) {
             this.props.onSelect(value);
         }

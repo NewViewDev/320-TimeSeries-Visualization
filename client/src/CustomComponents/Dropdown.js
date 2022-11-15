@@ -16,7 +16,11 @@ class Dropdown extends React.Component {
         this.setState({open: !this.state.open, search: ''});
     }
     select(value) {
-        this.setState({value: value, open: false, search: ''});
+        if(this.props.noSelect) {
+            this.setState({open: false});
+        } else {
+            this.setState({value: value, open: false});
+        }
         if(this.props.onSelect) {
             this.props.onSelect(value);
         }
