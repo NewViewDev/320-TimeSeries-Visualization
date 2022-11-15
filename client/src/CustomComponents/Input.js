@@ -7,7 +7,7 @@ class Input extends React.Component {
     }
     render() {
         return (
-            <input className="input" placeholder={this.props.children}/>
+            <input className={"input" + " " + this.props.className} placeholder={this.props.children}/>
         );
     }
 }

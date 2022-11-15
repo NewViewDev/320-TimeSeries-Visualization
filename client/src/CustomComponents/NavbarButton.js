@@ -7,7 +7,7 @@ class NavButton extends React.Component {
     }
     render() {
         return (
-            <div onClick={this.props.onClick} className={"navbar-button navbar-element" + (this.props.active ? " active" : '')} >
+            <div onClick={this.props.onClick} className={"navbar-button navbar-element" + (this.props.active ? " active" : '') + " " + this.props.className} >
                 {this.props.children}
             </div>
         );

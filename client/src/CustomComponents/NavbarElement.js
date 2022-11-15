@@ -7,7 +7,7 @@ class NavElement extends React.Component {
     }
     render() {
         return (
-            <div style={{marginLeft: this.props.float === "right" ? "auto" : ''}}className={"navbar-element"} >
+            <div style={{marginLeft: this.props.float === "right" ? "auto" : ''}} className={"navbar-element" + " " + this.props.className} >
                 {this.props.children}
             </div>
         );

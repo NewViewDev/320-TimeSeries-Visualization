@@ -38,7 +38,7 @@ class Dropdown extends React.Component {
         return (
             <>
                 <input readOnly value={this.state.value ? this.state.value : ""} className="selection"/>
-                <div className={"dropdown dropdown-search" + (this.state.open ? " open" : "")} onClick={this.drop}>
+                <div className={"dropdown dropdown-search" + (this.state.open ? " open" : "") + " " + this.props.className} onClick={this.drop}>
                     <div style={{position: "absolute", color: "#fff5"}}>{this.state.value && this.state.search === '' ? this.state.value : ''}</div>
                     {this.state.open ? this.state.search : (this.state.value ? this.state.value : this.props.children)}
                     

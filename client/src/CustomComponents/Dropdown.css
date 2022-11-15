@@ -2,7 +2,7 @@
     position: relative;
     width: fit-content;
     min-width: 100px;
-    padding-right: 2.5em;
+    padding-right: 2.5em !important;
 }
 
 .dropdown::before {
