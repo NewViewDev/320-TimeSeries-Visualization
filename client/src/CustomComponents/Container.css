@@ -10,3 +10,11 @@
     color: black !important;
     background: white !important;
 }
+.container.light > .navbar > .navbar-button:hover {
+    background: white;
+    color: black;
+}
+.container.light > .navbar > .navbar-button.active {
+    background: white;
+    color: black;
+}
