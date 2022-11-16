@@ -20,6 +20,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const dataRouter = require("./routes/dataRoutes");
+const errorHandlerMiddleware = require("./utils/error-handler");
 
 if (process.env.NODE_ENV !== "production") {
   app.use(morgan("dev"));
@@ -28,6 +29,8 @@ if (process.env.NODE_ENV !== "production") {
 app.use(express.json());
 
 app.use("/api/v1/data", dataRouter);
+
+app.use(errorHandlerMiddleware);
 
 const port = process.env.PORT || 4000;
 

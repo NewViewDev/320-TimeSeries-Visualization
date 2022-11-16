@@ -1,0 +1,82 @@
+.dropdown {
+    position: relative;
+    width: fit-content;
+    min-width: 100px;
+    padding-right: 2.5em;
+}
+
+.dropdown::before {
+    content: '▼';
+    position: absolute;
+    color: inherit;
+    top: 50%;
+    right: 1em;
+    transform: translateY(-50%) rotate(90deg);
+    transition: all .5s;
+}
+.dropdown:hover::before {
+    transform: translateY(-50%) rotate(0deg);
+}
+.dropdown.open::before {
+    transform: translateY(-50%) rotate(0deg);
+}
+.dropdown.open::after {
+    content: '|';
+    /* content: '';
+    position: relative;
+    width: 1px;
+    height: 1em;
+    border: 0 0 .5em 0 solid black;
+    background: white;
+    display: inline-block; */
+    animation: flicker 1s infinite;
+}
+
+@keyframes flicker{
+    0% {
+        opacity: 100%;
+    }
+    49% {
+        opacity: 100%;
+    }
+    50% {
+        opacity: 0%;
+    }
+    99% {
+        opacity: 0%;
+    }
+}
+
+.selection {
+    display: none;
+}
+.options {
+    position: absolute;
+    top: 100%;
+    min-width: 100%;
+    background: white;
+    color: black !important;
+    left: 0;
+    border-radius: 15px;
+    overflow: hidden;
+    opacity: 0;
+    transition: all .2s;
+    transform: translateY(-5px);
+    pointer-events: none;
+    z-index: 10000000;
+}
+.options.open {
+    opacity: 100%;
+    transform: translateY(0px);
+    pointer-events: all;
+}
+.options > div {
+    background: #0000;
+    transition: all .2s;
+    width: 100%;
+    margin: 0px;
+    padding: 3px 10px;
+}
+.options > div:hover {
+    background: #0002;
+}
