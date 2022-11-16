@@ -38,3 +38,9 @@ You can modify the format that you need in source file.
 Description:
 Randomly generate the LMP and override to all the current LMPs.
 ```
+
+### script3.py
+```bash
+Description:
+Randomly generate the LMP. Based on 3.5, which includes datas in July, generate 12 months datas for year 2020.
+```

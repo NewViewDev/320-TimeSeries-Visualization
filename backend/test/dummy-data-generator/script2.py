@@ -17,10 +17,10 @@ Randomly generate the LMP and override to all the current LMPs.
 '''
 
 input_file_name = 'test-output3.5.csv'
-output_file_name = 'test-output3.6.csv'
+output_file_name = 'test-output3.7.csv'
 
 
-with open(str(input_file_name)) as csvfile, open(str(output_file_name), 'w') as output:
+with open(str(input_file_name)) as csvfile, open(str(output_file_name), 'a') as output:
     writer = csv.writer(output, delimiter=',')
     reader = csv.reader(csvfile, delimiter=',')
 
