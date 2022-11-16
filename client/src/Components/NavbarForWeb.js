@@ -1,5 +1,4 @@
 import Container from 'react-bootstrap/Container';
-import Button from 'react-bootstrap/Button';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown' 
 import Nav from 'react-bootstrap/Nav'
@@ -11,34 +10,32 @@ import SanityCheckPage from '../Pages/SanityCheck';
 import Home from '../Pages/Home';
 import AnaylsisPage from '../Pages/Anaylsis';
 
-// import logo from './Images/iso-logo-gray.jpg'
 import logo from './Images/1200px-ISO_New_England.png'
-import BasicButton from './BasicButton';
 
 class NavbarForWeb extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            currPage: 0
+            currPage: 0 //stores an index which specifies which page we are on
         }
         this.getPage = this.getPage.bind(this);
     }
 
-    setPageIndex(i){
+    setPageIndex(i){ //Switches the index for the current page
         this.setState({
             currPage: i
         })
     }
 
-    getPage(){
+    getPage(){ //Gets the actual component that represents the currPage index
         let key = this.state.currPage
         switch (key) {
             case 0:
-                return <Home/>
+                return <Home/> //The initial page, in Home.js
             case 1:
-                return <SanityCheckPage/>
+                return <SanityCheckPage/> //The Sanity Check page, in SanityCheck.js
             case 2:
-                return <AnaylsisPage/>
+                return <AnaylsisPage/> //The Anaylsis page, in Anaylsis.js
             default:
                 break;
         }
@@ -51,6 +48,7 @@ class NavbarForWeb extends React.Component {
                     <Container>
                         <Navbar.Brand href = '#home' className = 'ml-0'>
                             <h1>
+                                {/* ISO Logo */}
                                 <img
                                     src = {logo}
                                     // class = "center"
@@ -63,19 +61,13 @@ class NavbarForWeb extends React.Component {
                             </h1>
                         </Navbar.Brand>
                         <Nav variant = "pills" className="me-auto">
-                            {/* <Nav.Link href="#SanityCheck">Sanity Check</Nav.Link>
-                            <Nav.Link href="#Anaysis">Analysis</Nav.Link> */}
-                            {/* <Button variant="primary">
-                                Sanity Check
-                            </Button>
-                            <Button variant="primary">
-                                Analysis
-                            </Button> */}
                             <ToggleButtonGroup type = "radio" name = "navSite">
                                 <ToggleButton variant = "outline-light" id = {0} value ={0} onChange = {(val) => this.setPageIndex(1)}>
+                                    {/* This button toggles to the sanity check page */}
                                     Sanity Check
                                 </ToggleButton>
                                 <ToggleButton variant = "outline-light" id = {1} value ={1} onChange = {(val) => this.setPageIndex(2)}>
+                                    {/* This button toggles to the Analysis Page */}
                                     Analysis
                                 </ToggleButton>
                             </ToggleButtonGroup>
@@ -87,7 +79,8 @@ class NavbarForWeb extends React.Component {
                         </Nav>
                     </Container>
                 </Navbar>
-                {this.getPage()}
+                {/* Switches the component to the correct page */}
+                {this.getPage()} 
             </div>
         );
     }

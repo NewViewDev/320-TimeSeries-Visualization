@@ -29,33 +29,6 @@ class DropDownTest2 extends React.Component {//the number of items following is 
     }
 
     manageList() {
-        // let count = -1; //unused, originally i thought about having a id, value pair, but realized that the id dosen't really do anything might come back to it though, so leaving the code for now
-        // this.comList = this.state.filterList.map((entry) => 
-        //     {
-        //         count++;
-        //         let temp = count;
-        //         // console.log(count);
-        //         return <li key = {temp}>{
-        //             <Dropdown.Item as = "button" onClick={() => {
-        //                 console.log(temp);
-        //                 if(this.props.func != undefined){
-        //                     this.props.func(temp);
-        //                 }
-        //                 console.log(this.state.selectedScenario)
-        //                 this.setSelect(entry);
-        //             }}>
-        //                 {temp + " : " + entry}
-        //             </Dropdown.Item>
-        //         }
-        //     </li>
-        //     }
-        // );
-        // return (
-        //     <ul style={{
-        //         listStyle: 'none',
-        //         padding: 0
-        //     }}>{this.comList}</ul>
-        // );
         let count = -1;
         
         this.comList = this.state.filterList.map((entry) => 
