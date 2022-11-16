@@ -1,5 +1,7 @@
 ## Description
 ### Usage:
+Before you try to use it, make sure the output path and the input path.
+
 In the terminal, enter:
 ```bash
 python3 scriptX.py

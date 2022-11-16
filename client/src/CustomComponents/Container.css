@@ -1,0 +1,7 @@
+.mycontainer {
+    padding: 2%;
+    position: relative;
+    background: red;
+    height: 100%;
+    width: 100%;
+}
