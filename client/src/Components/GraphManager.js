@@ -31,11 +31,11 @@ class GraphManager extends React.Component {
         switch (key) {
             case 0:
                 // let startTime = Date.now();
-                // let ScatterTest = <ScatterLMP data = {this.props.data}/>;
+                let ScatterTest = <ScatterLMP data = {this.props.data}/>;
                 // console.log("HI");
                 // console.log("Time Elapsed for Whole:" + (Date.now() - startTime));
-                // return ScatterTest  //The initial page, in Home.js
-                return <TimeSeriesLinePlot data = {this.props.data}/>
+                return ScatterTest  //The initial page, in Home.js
+                // return <TimeSeriesLinePlot data = {this.props.data}/>
             case 1:
                 return <HistogramTest data = {this.props.data}/>   //The Sanity Check page, in SanityCheck.js
             case 2:

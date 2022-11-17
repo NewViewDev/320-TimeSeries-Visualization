@@ -98,12 +98,6 @@ function AnaylsisPage() {
       <h1>getMeanMedianMode(scenario: {nameList.scenario}, metric: {nameList.metric}, timePeriod: {nameList.timePeriod}, pnodeGrouping: {nameList.pnodeGrouping})</h1>
     </div>
   );
-  /*return (
-    <div>
-      <h1>Danity Scenario Analysis</h1>
-      <p>Scenario: {todos[0].text}</p>
-    </div>
-  );*/
 }
 
 export default AnaylsisPage;

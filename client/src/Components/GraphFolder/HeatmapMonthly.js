@@ -113,6 +113,29 @@ class HeatmapMonthly extends React.Component{
                   height: 100,
                   type: 'heatmap',
                 },
+                plotOptions:{
+                    heatmap:{
+                        reverseNegativeShade: false,
+                        shadeIntensity: .7,
+                        colorScale:{
+                            ranges:[{
+                                from: 0,
+                                to: 15, 
+                                name: '<= 15% Error',
+                                color: "#008EEB"
+                            }, {
+                                from: 15,
+                                to: 50,
+                                name: '>15% Error',
+                                color: "#FF0008"
+                            }
+                            ],
+                            inverse: true
+                            
+                        }
+                    
+                    }
+                },
                 dataLabels: {
                     enabled: true,
                     formatter: function(val) {
@@ -122,7 +145,6 @@ class HeatmapMonthly extends React.Component{
                       colors: ["#000000"]
                     }
                 },
-                colors: ["#008FFB"],
                 title: {
                   text: 'HeatMap Chart (Single color)'
                 },

@@ -9,7 +9,7 @@ import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup';
 import SanityCheckPage from '../Pages/SanityCheck';
 import Home from '../Pages/Home';
 import AnaylsisPage from '../Pages/Anaylsis';
-
+import TestPage from '../Pages/TestPage';
 import logo from './Images/1200px-ISO_New_England.png'
 
 class NavbarForWeb extends React.Component {
@@ -31,7 +31,7 @@ class NavbarForWeb extends React.Component {
         let key = this.state.currPage
         switch (key) {
             case 0:
-                return <Home/> //The initial page, in Home.js
+                return <TestPage/> //The initial page, in Home.js
             case 1:
                 return <SanityCheckPage/> //The Sanity Check page, in SanityCheck.js
             case 2:
