@@ -21,7 +21,7 @@ function manageData(arr, baseCase, scenario){//takes the data recieved from the 
     //First we have connect the data from base and scenario since scatter plot is comparing lmp between the base and scenario
 
     let mapeArr = new Array(24);
-
+    console.log(arr);
     for(let i = 0; i < mapeArr.length; i++){ //construct the 24 series with 12 months each
         mapeArr[i] = (constructSeries(i));
     }
@@ -37,7 +37,7 @@ function manageData(arr, baseCase, scenario){//takes the data recieved from the 
             let arr = [];
             if(scenarioID == baseCase){
                 arr = [Infinity, currNode["LMP"]];
-            } else if(scenarioID == scenario){
+            } else {//if(scenarioID == scenario){
                 arr = [currNode["LMP"], Infinity];
             }
             dataMap.set(periodID, arr)
@@ -50,6 +50,7 @@ function manageData(arr, baseCase, scenario){//takes the data recieved from the 
         }
     }
 
+    
     let keyIterator = dataMap.keys();
     let key = keyIterator.next();
 
@@ -61,17 +62,26 @@ function manageData(arr, baseCase, scenario){//takes the data recieved from the 
         let dataScen = data[0];
         let MAPE = Math.abs((dataBase - dataScen)/dataScen);
         let currDate = new Date(value);
+        
         let hour = currDate.getHours();
         let month = currDate.getMonth();
         if(hour == 0) {
-            if(currDate.getUTCDate() == 1){
+            if(currDate.getDate() == 1){
                 month -= 1;
+                if(month == -1){
+                    month = 11;
+                }
             }
             hour = 24;
 
         }
-        mapeArr[hour - 1].data[month][1]++;
-        mapeArr[hour - 1].data[month][0] = mapeArr[hour - 1].data[month][0] + MAPE;
+        // console.log(month);
+        if(dataBase == Infinity || dataScen == Infinity){
+            console.log(value);
+        } else {
+            mapeArr[hour - 1].data[month][1]++;
+            mapeArr[hour - 1].data[month][0] = mapeArr[hour - 1].data[month][0] + MAPE;
+        }
 
         key = keyIterator.next();
 
@@ -84,11 +94,9 @@ function manageData(arr, baseCase, scenario){//takes the data recieved from the 
             } else {
                 mapeArr[i].data[j] = 0;
             }
-            
-
         }
     }
-
+    console.log(mapeArr);
     return mapeArr;
 }
 
