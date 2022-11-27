@@ -4,6 +4,8 @@ import Dropdown from "../CustomComponents/DropdownSearch";
 import Container from "../CustomComponents/Container";
 import Button from "../CustomComponents/Button";
 
+
+
 class AnaylsisPage extends React.Component {
   constructor(props) {
     super(props);

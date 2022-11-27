@@ -1,7 +1,7 @@
 import React from "react";
 import Dropdown from '../CustomComponents/DropdownSearch'
 
-class DatabaseDropdown extends React.Component {
+class NodeDropdown extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -13,9 +13,8 @@ class DatabaseDropdown extends React.Component {
         .then(res => res.json())
         .then(res => {
             // console.log(res)
-            let dataArray = res['data']['scenarios'];
-            console.log(dataArray.map(value=>value['SCENARIO_ID']))
-            this.setState({list: dataArray.map(value=>value['SCENARIO_ID'])});
+            let dataArray = res['data']['nodes'];
+            this.setState({list: dataArray});
         })
     }
     render() {
@@ -26,4 +25,4 @@ class DatabaseDropdown extends React.Component {
     }
 }
 
-export default DatabaseDropdown;
+export default NodeDropdown;

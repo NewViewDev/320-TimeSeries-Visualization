@@ -21,7 +21,7 @@ function manageData(arr, baseCase, scenario){//takes the data recieved from the 
     //First we have connect the data from base and scenario since scatter plot is comparing lmp between the base and scenario
 
     let mapeArr = new Array(24);
-
+    console.log(arr);
     for(let i = 0; i < mapeArr.length; i++){ //construct the 24 series with 12 months each
         mapeArr[i] = (constructSeries(i));
     }
@@ -37,7 +37,7 @@ function manageData(arr, baseCase, scenario){//takes the data recieved from the 
             let arr = [];
             if(scenarioID == baseCase){
                 arr = [Infinity, currNode["LMP"]];
-            } else if(scenarioID == scenario){
+            } else {//if(scenarioID == scenario){
                 arr = [currNode["LMP"], Infinity];
             }
             dataMap.set(periodID, arr)
@@ -50,6 +50,7 @@ function manageData(arr, baseCase, scenario){//takes the data recieved from the 
         }
     }
 
+    
     let keyIterator = dataMap.keys();
     let key = keyIterator.next();
 
@@ -61,17 +62,26 @@ function manageData(arr, baseCase, scenario){//takes the data recieved from the 
         let dataScen = data[0];
         let MAPE = Math.abs((dataBase - dataScen)/dataScen);
         let currDate = new Date(value);
-        let hour = currDate.getUTCHours();
-        let month = currDate.getUTCMonth();
+        
+        let hour = currDate.getHours();
+        let month = currDate.getMonth();
         if(hour == 0) {
-            if(currDate.getUTCDate() == 1){
+            if(currDate.getDate() == 1){
                 month -= 1;
+                if(month == -1){
+                    month = 11;
+                }
             }
             hour = 24;
 
         }
-        mapeArr[hour - 1].data[month][1]++;
-        mapeArr[hour - 1].data[month][0] = mapeArr[hour - 1].data[month][0] + MAPE;
+        // console.log(month);
+        if(dataBase == Infinity || dataScen == Infinity){
+            console.log(value);
+        } else {
+            mapeArr[hour - 1].data[month][1]++;
+            mapeArr[hour - 1].data[month][0] = mapeArr[hour - 1].data[month][0] + MAPE;
+        }
 
         key = keyIterator.next();
 
@@ -84,11 +94,9 @@ function manageData(arr, baseCase, scenario){//takes the data recieved from the 
             } else {
                 mapeArr[i].data[j] = 0;
             }
-            
-
         }
     }
-
+    console.log(mapeArr);
     return mapeArr;
 }
 
@@ -105,6 +113,29 @@ class HeatmapMonthly extends React.Component{
                   height: 100,
                   type: 'heatmap',
                 },
+                plotOptions:{
+                    heatmap:{
+                        reverseNegativeShade: false,
+                        shadeIntensity: .7,
+                        colorScale:{
+                            ranges:[{
+                                from: 0,
+                                to: 15, 
+                                name: '<= 15% Error',
+                                color: "#008EEB"
+                            }, {
+                                from: 15,
+                                to: 50,
+                                name: '>15% Error',
+                                color: "#FF0008"
+                            }
+                            ],
+                            inverse: true
+                            
+                        }
+                    
+                    }
+                },
                 dataLabels: {
                     enabled: true,
                     formatter: function(val) {
@@ -114,7 +145,6 @@ class HeatmapMonthly extends React.Component{
                       colors: ["#000000"]
                     }
                 },
-                colors: ["#008FFB"],
                 title: {
                   text: 'HeatMap Chart (Single color)'
                 },

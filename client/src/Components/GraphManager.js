@@ -12,29 +12,23 @@ import HeatmapMonthly from "./GraphFolder/HeatmapMonthly";
 class GraphManager extends React.Component {
     
     constructor(props) {
-        super(props)
-        this.state = {
-            currPage: 0 //stores an index which specifies which page we are on
-        }
+        super(props) //this.props.currGraph, this.props.data
         this.getPage = this.getPage.bind(this);
     }
 
-    setPageIndex(i){ //Switches the index for the current page
-        this.setState({
-            currPage: i
-        })
-    }
-
     getPage(){ //Gets the actual component that represents the currPage index
-        let key = this.state.currPage
+        let key = this.props.currGraph
         switch (key) {
-            case 0:
-                return <ScatterLMP data = {this.props.data}/>   //The initial page, in Home.js
             case 1:
-                return <HistogramTest data = {this.props.data}/>   //The Sanity Check page, in SanityCheck.js
+                console.log(this.props.data)
+                return <ScatterLMP data = {this.props.data}/>   //The initial page, in Home.js
             case 2:
+                return <HistogramTest data = {this.props.data}/>   //The Sanity Check page, in SanityCheck.js
+            case 3:
                 return <HeatmapMonthly data = {this.props.data} baseCase = {this.props.baseCase} scenario = {this.props.scenario}/>  //The Anaylsis page, in Anaylsis.js
             default:
+                console.log(this.props.data)
+                return <ScatterLMP data = {this.props.data}/>
                 break;
         }
     }
@@ -42,22 +36,6 @@ class GraphManager extends React.Component {
     render() {
         return (
             <div>
-                <Nav variant = "pills">
-                    <ToggleButtonGroup type = "radio" name = "Graph Changer" defaultValue={0}>
-                        <ToggleButton variant = "outline-dark" id = {"Scatter"} value ={0} onChange = {(val) => this.setPageIndex(0)}>
-                            {/* This button toggles to the sanity check page */}
-                            Scatter
-                        </ToggleButton>
-                        <ToggleButton variant = "outline-dark" id = {"Histogram"} value ={1} onChange = {(val) => this.setPageIndex(1)}>
-                            {/* This button toggles to the Analysis Page */}
-                            Histogram
-                        </ToggleButton>
-                        <ToggleButton variant = "outline-dark" id = {"Heatmap"} value ={2} onChange = {(val) => this.setPageIndex(2)}>
-                            {/* This button toggles to the Analysis Page */}
-                            Heatmap
-                        </ToggleButton>
-                    </ToggleButtonGroup>
-                </Nav>
                 {/* Switches the component to the correct page */}
                 {this.getPage()} 
             </div>
