@@ -12,8 +12,12 @@ import HeatmapMonthly from "./GraphFolder/HeatmapMonthly";
 class GraphManager extends React.Component {
     
     constructor(props) {
-        super(props) //this.props.currGraph, this.props.data
+        super(props) //this.props.currGraph, this.props.data, this.props.grouping type
         this.getPage = this.getPage.bind(this);
+    }
+
+    groupData(){
+
     }
 
     getPage(){ //Gets the actual component that represents the currPage index

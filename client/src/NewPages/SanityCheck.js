@@ -1,12 +1,11 @@
 import React from "react"; 
-import Dropdown from "../CustomComponents/DropdownSearch";
 import DatabaseDropdown from "../Components/DatabaseDropdown";
 import Container from "../CustomComponents/Container";
 import Button from "../CustomComponents/Button";
 import Navbar from "../CustomComponents/Navbar";
 import NavButton from "../CustomComponents/NavbarButton";
 import NavElement from "../CustomComponents/NavbarElement"
-import Scatterplot from "../Components/Scatterplot";
+
 import NodeDropdown from "../Components/NodeDropdown";
 import GraphManager from "../Components/GraphManager";
 
@@ -57,7 +56,7 @@ class SanityCheckPage extends React.Component {
           console.log(res["data"]["nodes"]);
           this.setState({ 
               // apiResponse: res["data"]["nodes"]
-              apiRes: res["data"]["nodes"]
+              apiRes: [res["data"]["nodes"], selectedScenario, selectedBase]
                   // <div>
                   //     <GraphManager data = {res["data"]["nodes"]} baseCase = {selectedBase} scenario = {selectedScenario}/> 
                   // </div>   
@@ -87,7 +86,7 @@ class SanityCheckPage extends React.Component {
           </Navbar>
           {/* <Scatterplot data={{}}>Select PNode</Scatterplot> */}
           {this.state.apiRes != undefined &&
-            <GraphManager data = {this.state.apiRes} currGraph = {this.state.page}/>
+            <GraphManager data = {this.state.apiRes[0]} currGraph = {this.state.page} scenario = {this.state.apiRes[1]} baseCase = {this.state.apiRes[2]}/>
           }
           {/* <GraphManager data = {this.state.apiRes} currGraph = {this.state.page}/> */}
           {this.state.scenario}
