@@ -1,27 +1,59 @@
 const { StatusCodes } = require("http-status-codes");
-const prisma = require("../utils/prisma");
-
+const axios = require("axios");
 const math = require("mathjs");
+const { DateTime } = require("luxon");
 
 const { NotFoundError, BadRequestError } = require("../errors");
 
+const dataLayer = axios.create({
+  baseURL: process.env.DATALAYER_URL,
+});
+
+// Get distinct node names
 exports.getNodeNames = async (req, res) => {
-  let nodes = await prisma.nodes.findMany({
+  const START_DATE = DateTime.fromISO("2020-07-01T01:00:00", {
+    zone: "UTC+0",
+  }).toJSDate();
+  const END_DATE = DateTime.fromISO("2020-07-02T00:00:00", {
+    zone: "UTC+0",
+  }).toJSDate();
+
+  let nodes = await dataLayer.post("/data/find/nodes", {
+    where: {
+      PERIOD_ID: {
+        gte: START_DATE,
+        lte: END_DATE,
+      },
+    },
     select: {
       PNODE_NAME: true,
     },
     distinct: ["PNODE_NAME"],
   });
 
+  if (nodes.status != 200) {
+    throw new Error("Data Layer ERROR");
+  }
+  nodes = nodes.data;
+
+  nodes = nodes.map((node) => node.PNODE_NAME);
+
   if (nodes.length == 0) {
     throw new NotFoundError("No node found");
   }
-  nodes = nodes.map((node) => node.PNODE_NAME);
   res.status(StatusCodes.OK).json({ data: { nodes } });
 };
 
+// Get scenario ids and names
 exports.getScenarios = async (req, res) => {
-  let scenarios = await prisma.scenarios.findMany({});
+
+  let scenarios = await dataLayer.post("/data/find/scenarios", {});
+
+  if (scenarios.status != 200) {
+    throw new Error("Data Layer ERROR");
+  }
+
+  scenarios = scenarios.data;
   scenarios = scenarios.map((s) => ({
     SCENARIO_ID: s.SCENARIO_ID,
     SCENARIO_NAME: s.SCENARIO_NAME,
@@ -35,79 +67,152 @@ exports.getScenarios = async (req, res) => {
 // Get data points for specified node with two scenarios
 exports.getNode = async (req, res) => {
   // extract params from url
-  const { PNODE_NAME, SCENARIO_ID_1, SCENARIO_ID_2, FIELD } = req.query;
-  let nodes;
 
-	// query database based off of params and handle errors
-	try {
-		nodes = await prisma.nodes.findMany({
-			where: {
-				PNODE_NAME: PNODE_NAME,
-				OR: [
-					{ SCENARIO_ID: SCENARIO_ID_1 },
-					{ SCENARIO_ID: SCENARIO_ID_2 },
-				],
-			},
-			orderBy: [
-				{
-					SCENARIO_ID: "asc",
-				},
-				{
-					PERIOD_ID: "asc",
-				},
-			],
-			select: {
-				SCENARIO_ID: true,
-				PERIOD_ID: true,
-				[FIELD]: true,
-			},
-		});
-	} catch (err) {
-		res.status(StatusCodes.BAD_REQUEST).json({
-			message: err.message,
-		});
-	}
+  let {
+    PNODE_NAME,
+    SCENARIO_ID_1,
+    SCENARIO_ID_2,
+    START_DATE,
+    END_DATE,
+    FIELD,
+  } = req.query;
+
+  // check if params provided
   if (!PNODE_NAME || !SCENARIO_ID_1 || !SCENARIO_ID_2 || !FIELD) {
     throw new BadRequestError("Please provide all values");
   }
 
-  nodes = await prisma.nodes.findMany({
-    where: {
-      PNODE_NAME: PNODE_NAME,
-      OR: [{ SCENARIO_ID: SCENARIO_ID_1 }, { SCENARIO_ID: SCENARIO_ID_2 }],
-    },
-    select: {
-      SCENARIO_ID: true,
-      PERIOD_ID: true,
-      [FIELD]: true,
-    },
-  });
+  let nodes;
 
+  if (START_DATE && END_DATE) {
+    START_DATE = DateTime.fromISO(START_DATE, { zone: "UTC+0" }).toJSDate();
+    END_DATE = DateTime.fromISO(END_DATE, { zone: "UTC+0" }).toJSDate();
+
+    nodes = await dataLayer.post("data/find/nodes", {
+      where: {
+        PNODE_NAME: PNODE_NAME,
+        OR: [{ SCENARIO_ID: SCENARIO_ID_1 }, { SCENARIO_ID: SCENARIO_ID_2 }],
+        PERIOD_ID: {
+          gte: START_DATE,
+          lte: END_DATE,
+        },
+      },
+      select: {
+        SCENARIO_ID: true,
+        PERIOD_ID: true,
+        [FIELD]: true,
+      },
+      orderBy: [
+        {
+          SCENARIO_ID: "asc",
+        },
+        { PERIOD_ID: "asc" },
+      ],
+    });
+  } else {
+    nodes = await dataLayer.post("data/find/nodes", {
+      where: {
+        PNODE_NAME: PNODE_NAME,
+        OR: [{ SCENARIO_ID: SCENARIO_ID_1 }, { SCENARIO_ID: SCENARIO_ID_2 }],
+      },
+      select: {
+        SCENARIO_ID: true,
+        PERIOD_ID: true,
+        [FIELD]: true,
+      },
+      orderBy: [
+        {
+          SCENARIO_ID: "asc",
+        },
+        { PERIOD_ID: "asc" },
+      ],
+    });
+  }
+
+  nodes = nodes.data;
   if (nodes.length == 0) {
     throw new NotFoundError("No node with specified filters");
   }
 
-  res.status(StatusCodes.OK).json({ data: { nodes } });
+  res.status(StatusCodes.OK).json({ length: nodes.length, data: { nodes } });
 };
 
-// Group by
-
 exports.getNodeGroup = async (req, res) => {
-  // extract params from url
-  let { SCENARIO_ID, START_DATE, END_DATE, FIELD, GROUPBY, LMP_RANGE } =
-    req.query;
-  let nodes;
+  promise = [];
+  let {
+    SCENARIO_ID,
+    START_DATE,
+    END_DATE,
+    FIELD,
+    GROUPBY,
+    LMP_RANGE,
+    INTERVAL,
+    OFFSET,
+  } = req.query;
 
   if (!SCENARIO_ID || !START_DATE || !END_DATE) {
     throw new BadRequestError("Please provide all values");
   }
 
-  START_DATE = new Date(START_DATE);
-  END_DATE = new Date(END_DATE);
-  START_DATE.setUTCHours(0);
-  END_DATE.setUTCHours(0);
+  START_DATE = DateTime.fromISO(START_DATE, { zone: "UTC+0" }).toJSDate();
+  END_DATE = DateTime.fromISO(END_DATE, { zone: "UTC+0" }).toJSDate();
+  OFFSET = parseInt(OFFSET);
 
-  nodes = await prisma.nodes.findMany({
+  let start = new Date(START_DATE.getTime());
+  while (start < END_DATE) {
+    let interval;
+    if (INTERVAL === "daily") {
+      interval = 24;
+    } else if (INTERVAL === "monthly") {
+      var test = start.toISOString();
+      interval = 24 * getDays(start.getUTCFullYear(), start.getUTCMonth() + 1);
+    } else if (INTERVAL === "yearly") {
+      interval = 24 * daysInYear(start.getUTCFullYear());
+    }
+
+    promise.push(
+      nodeGroup(
+        SCENARIO_ID,
+        addHours(start, OFFSET),
+        addHours(start, interval + OFFSET - 1),
+        FIELD,
+        GROUPBY,
+        LMP_RANGE
+      )
+    );
+    start = addHours(start, interval);
+  }
+
+  arr = [];
+  arr = await Promise.all(promise);
+
+  res.status(StatusCodes.OK).json({ length: arr.length, data: [...arr] });
+};
+
+// Gets days in a month
+function getDays(year, month) {
+  return new Date(year, month, 0).getDate();
+}
+
+function addHours(date, hours) {
+  return new Date(date.getTime() + hours * 60 * 60 * 1000);
+}
+
+function daysInYear(year) {
+  return (year % 4 === 0 && year % 100 > 0) || year % 400 == 0 ? 366 : 365;
+}
+
+async function nodeGroup(
+  SCENARIO_ID,
+  START_DATE,
+  END_DATE,
+  FIELD,
+  GROUPBY,
+  LMP_RANGE
+) {
+  // extract params from url
+
+  let nodes = await dataLayer.post("data/find/nodes", {
     where: {
       SCENARIO_ID: SCENARIO_ID,
       PERIOD_ID: {
@@ -121,53 +226,74 @@ exports.getNodeGroup = async (req, res) => {
       PERIOD_ID: true,
       [FIELD]: true,
     },
-    orderBy: {
-      LMP: "asc",
-    },
+
+    orderBy: [
+      {
+        LMP: "asc",
+      },
+    ],
   });
+  nodes = nodes.data;
 
   let groups = { all: [...nodes] };
 
-  groups = group_int(nodes, "LMP", groups, LMP_RANGE.split(","));
+  if (GROUPBY?.includes("LMP")) {
+    groups = group_int("LMP", groups, LMP_RANGE.split(","));
+  }
 
-  groups = group_string(nodes, "PNODE_NAME", groups);
+  if (GROUPBY?.includes("PNODE_NAME")) {
+    groups = group_string("PNODE_NAME", groups);
+  }
+
   for (const group in groups) {
     const values = groups[group].map((node) => node["LMP"]);
     const std = math.std(values);
     const mean = math.mean(values);
     const median = math.median(values);
     const stat = { std, mean, median };
-    groups[group] = { stats: stat, nodes: groups[group] };
+    // groups[group] = { stats: stat, nodes: groups[group] };
+    groups[group] = { stats: stat };
   }
 
   if (nodes.length == 0) {
     throw new NotFoundError("No node with specified filters");
   }
+  const label = START_DATE.toISOString() + "-" + END_DATE.toISOString();
 
-  res.status(StatusCodes.OK).json({ data: { groups }, length: nodes.length });
-};
+  return { interval: label, groups };
+}
 
-function group_string(arr, FIELD, groups) {
+/**
+ * Groups by equivalent strings
+ * @param {String} FIELD
+ * @param {object} groups
+ * @returns
+ */
+function group_string(FIELD, groups) {
   for (const group in groups) {
-    arr = groups[group];
+    let arr = groups[group];
     arr.forEach((node) => {
       const prop = node[FIELD];
+      // if first grouping discard "all"
       const name = group !== "all" ? group + "," + prop : prop;
+      // add new group
       if (groups.hasOwnProperty(name)) {
         groups[name].push(node);
       } else {
         groups[name] = [node];
       }
     });
+
+    // delete old group
     delete groups[group];
   }
 
   return groups;
 }
 
-function group_int(arr, FIELD, groups, query) {
+function group_int(FIELD, groups, query) {
   for (const group in groups) {
-    arr = groups[group];
+    let arr = groups[group];
     let max = 0;
     let query_index = 0;
     for (let i = 0; i < arr.length; i++) {
@@ -183,6 +309,9 @@ function group_int(arr, FIELD, groups, query) {
         groups[name] = [arr[i]];
       }
     }
+
+    // if last query integer is smaller than some of the elements
+    // name last group with the max value of integer field
     const name = group !== "all" ? group + "," + "undefined" : "undefined";
     if (groups[name]) {
       groups[

@@ -4,16 +4,6 @@ const app = express();
 app.use(cors());
 require("dotenv").config();
 
-// const cors = require('cors') //so the frontend can communicate with backend
-// app.use(cors())
-const prisma = require("./utils/prisma");
-const mongoose = require("mongoose");
-
-mongoose.connect(process.env.DATABASE_URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-
 require("express-async-errors");
 const morgan = require("morgan");
 const dotenv = require("dotenv");

@@ -1,0 +1,25 @@
+.navbar-element {
+    width: fit-content;
+    height: 100%;
+    background: #4A5E67;
+    color: white;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    font-size: 150%;
+    box-sizing: border-box;
+}
+.navbar-element > img {
+    height: 150%;
+}
+.navbar-button {
+    transition: all .1s;
+    cursor: pointer;
+}
+.navbar-button:hover {
+    background: #20303B;
+}
+.navbar-button.active {
+    background: #20303B;
+}

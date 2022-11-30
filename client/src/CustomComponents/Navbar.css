@@ -3,6 +3,8 @@
     position: absolute;
     left: 0;
     top: 0;
-    background: yellow;
+    background: #4A5E67;
     padding: 0;
+    vertical-align: top;
+    display: flex;
 }
