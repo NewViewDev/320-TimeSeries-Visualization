@@ -1,17 +1,17 @@
 import React from "react";
-import './NavbarButton.css'
+import './NavbarElement.css'
 
-class Button extends React.Component {
+class NavButton extends React.Component {
     constructor(props) {
         super(props);
     }
     render() {
         return (
-            <div className={"navbar-button" + (this.props.active ? " active" : '')} >
+            <div onClick={this.props.onClick} className={"navbar-button navbar-element" + (this.props.active ? " active" : '') + " " + this.props.className} >
                 {this.props.children}
             </div>
         );
     }
 }
 
-export default Button;
+export default NavButton;
