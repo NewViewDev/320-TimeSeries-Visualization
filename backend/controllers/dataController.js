@@ -15,7 +15,7 @@ exports.getNodeNames = async (req, res) => {
   const START_DATE = DateTime.fromISO("2020-07-01T01:00:00", {
     zone: "UTC+0",
   }).toJSDate();
-  const END_DATE = DateTime.fromISO("2020-07-01T02:00:00", {
+  const END_DATE = DateTime.fromISO("2020-07-02T00:00:00", {
     zone: "UTC+0",
   }).toJSDate();
 
@@ -133,7 +133,7 @@ exports.getNode = async (req, res) => {
     throw new NotFoundError("No node with specified filters");
   }
 
-	res.status(StatusCodes.OK).json({ data: { nodes } });
+  res.status(StatusCodes.OK).json({ length: nodes.length, data: { nodes } });
 };
 
 exports.getNodeGroup = async (req, res) => {
@@ -149,9 +149,9 @@ exports.getNodeGroup = async (req, res) => {
     OFFSET,
   } = req.query;
 
-	if (!SCENARIO_ID || !START_DATE || !END_DATE) {
-		throw new BadRequestError("Please provide all values");
-	}
+  if (!SCENARIO_ID || !START_DATE || !END_DATE) {
+    throw new BadRequestError("Please provide all values");
+  }
 
   START_DATE = DateTime.fromISO(START_DATE, { zone: "UTC+0" }).toJSDate();
   END_DATE = DateTime.fromISO(END_DATE, { zone: "UTC+0" }).toJSDate();
@@ -173,7 +173,7 @@ exports.getNodeGroup = async (req, res) => {
       nodeGroup(
         SCENARIO_ID,
         addHours(start, OFFSET),
-        addHours(start, interval + OFFSET),
+        addHours(start, interval + OFFSET - 1),
         FIELD,
         GROUPBY,
         LMP_RANGE
@@ -185,7 +185,7 @@ exports.getNodeGroup = async (req, res) => {
   arr = [];
   arr = await Promise.all(promise);
 
-  res.status(StatusCodes.OK).json({ length: arr.length, data: { arr } });
+  res.status(StatusCodes.OK).json({ length: arr.length, data: [...arr] });
 };
 
 // Gets days in a month
@@ -234,7 +234,7 @@ async function nodeGroup(
   });
   nodes = nodes.data;
 
-	let groups = { all: [...nodes] };
+  let groups = { all: [...nodes] };
 
   if (GROUPBY?.includes("LMP")) {
     groups = group_int("LMP", groups, LMP_RANGE.split(","));
@@ -244,20 +244,22 @@ async function nodeGroup(
     groups = group_string("PNODE_NAME", groups);
   }
 
-	for (const group in groups) {
-		const values = groups[group].map((node) => node["LMP"]);
-		const std = math.std(values);
-		const mean = math.mean(values);
-		const median = math.median(values);
-		const stat = { std, mean, median };
-		groups[group] = { stats: stat, nodes: groups[group] };
-	}
+  for (const group in groups) {
+    const values = groups[group].map((node) => node["LMP"]);
+    const std = math.std(values);
+    const mean = math.mean(values);
+    const median = math.median(values);
+    const stat = { std, mean, median };
+    // groups[group] = { stats: stat, nodes: groups[group] };
+    groups[group] = { stats: stat };
+  }
 
-	if (nodes.length == 0) {
-		throw new NotFoundError("No node with specified filters");
-	}
+  if (nodes.length == 0) {
+    throw new NotFoundError("No node with specified filters");
+  }
+  const label = START_DATE.toISOString() + "-" + END_DATE.toISOString();
 
-  return groups;
+  return { interval: label, groups };
 }
 
 /**
@@ -284,7 +286,7 @@ function group_string(FIELD, groups) {
     delete groups[group];
   }
 
-	return groups;
+  return groups;
 }
 
 function group_int(FIELD, groups, query) {
