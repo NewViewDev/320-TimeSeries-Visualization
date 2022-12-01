@@ -64,6 +64,7 @@ exports.getScenarios = async (req, res) => {
   res.status(StatusCodes.OK).json({ data: { scenarios } });
 };
 
+
 // Get data points for specified node with two scenarios
 exports.getNode = async (req, res) => {
   // extract params from url
@@ -105,7 +106,7 @@ exports.getNode = async (req, res) => {
         {
           SCENARIO_ID: "asc",
         },
-        { LMP: "asc" },
+        { PERIOD_ID: "asc" },
       ],
     });
   } else {
@@ -123,7 +124,7 @@ exports.getNode = async (req, res) => {
         {
           SCENARIO_ID: "asc",
         },
-        { LMP: "asc" },
+        { PERIOD_ID: "asc" },
       ],
     });
   }
@@ -135,7 +136,6 @@ exports.getNode = async (req, res) => {
 
   res.status(StatusCodes.OK).json({ length: nodes.length, data: { nodes } });
 };
-
 exports.getNodeGroup = async (req, res) => {
   promise = [];
   let {
