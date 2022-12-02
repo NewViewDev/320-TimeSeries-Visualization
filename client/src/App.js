@@ -2,16 +2,8 @@ import React from "react";
 
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Chart1 from './Components/Chart1';
-import MainButton from './Components/MainButton';
-import ButtonLists from './Components/ButtonLists';
-import BasicButton from './Components/BasicButton';
-import DropDownTest from "./Components/DropDownTest";
-import SelectingScenario from "./Components/SelectingScenario"
+
 import NavbarForWeb from "./Components/NavbarForWeb";
-import Stack from 'react-bootstrap/Stack'
-import TimeTesting from "./Components/TimeTesting";
-import SelectingScenarioNew from "./Components/SelectingScenarioNew";
 
 let test1 = [1,2,3,4,5,6,7,8];
 let test2 = [1,2,3,4,5,6,9,6];
@@ -20,29 +12,30 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = { apiResponse: "" };
+    this.callAPI = this.callAPI.bind(this);
   }
   //calls API just for testing to make sure that we can contact the server
   callAPI() {
     let toFetch = "http://localhost:4000/api/v1/data/scenarios";
-        fetch(toFetch)
-            .then(res => res.json())
-            .then(res => {
-                let dataArray = res['data']['scenarios']; //the returned value
-                let nameArray = [];
-                let idArray = [];
-                for(let i = 0; i < dataArray.length; i++){
-                    idArray.push(dataArray[i]["SCENARIO_ID"])
-                    nameArray.push(dataArray[i]["SCENARIO_NAME"])
-                    
-                }
-                // console.log(idArray)
-                // console.log(nameArray)
-                this.setState({ 
-                    scenarioList: res,
-                    selectedScenario: "Select Scenario",
-                    loading: false                    
-                })
-            });
+    fetch(toFetch)
+        .then(res => res.json())
+        .then(res => {
+            let dataArray = res['data']['scenarios']; //the returned value
+            let nameArray = [];
+            let idArray = [];
+            for(let i = 0; i < dataArray.length; i++){
+                idArray.push(dataArray[i]["SCENARIO_ID"])
+                nameArray.push(dataArray[i]["SCENARIO_NAME"])
+            }
+            // console.log(idArray)
+            // console.log(nameArray)
+            this.setState({ 
+                scenarioList: res,
+                selectedScenario: "Select Scenario",
+                loading: false                    
+            })
+    });
+    let toFetchNodes = "http://localhost:4000/api/v1/data/nodes/name";
   }
 
   componentWillMount() {//i think componentWillMount is being deprecated, so this so be updated, the call is to make sure the server is alive

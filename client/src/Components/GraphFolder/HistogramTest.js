@@ -87,7 +87,9 @@ class HistogramTest extends React.Component{
         let data = dataArr[0];
         let min = dataArr[1];
         let max = dataArr[2];
-
+        if(this.props.baseCase == this.props.scenario){
+          whichPlot = 0;
+        }
         return [{
             name: "LMP",
             data: bin(min, max, 10, data[whichPlot])

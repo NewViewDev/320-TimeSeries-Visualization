@@ -64,7 +64,7 @@ class ScatterLMP extends React.Component{
                     }
                 },
                 yaxis: {
-    
+                    min: 25,
                 }
             },
             
@@ -98,6 +98,7 @@ class ScatterLMP extends React.Component{
                 
             },
             xaxis: {
+                min: 25,
                 tickAmount: 10,
                 labels: {
                     formatter: function(val) {
@@ -106,7 +107,7 @@ class ScatterLMP extends React.Component{
                 }
             },
             yaxis: {
-
+                min: 25
             }
         };
     }
