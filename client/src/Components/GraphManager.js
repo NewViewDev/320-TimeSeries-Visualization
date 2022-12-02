@@ -22,7 +22,7 @@ class GraphManager extends React.Component {
         switch (key) {
             case 1:
                 console.log(this.props.data)
-                return <ScatterLMP data = {this.props.data}/>   //The initial page, in Home.js
+                return <ScatterLMP data = {this.props.data} baseCase = {this.props.baseCase} scenario = {this.props.scenario}/>   //The initial page, in Home.js
             case 2:
                 return <HistogramTest data = {this.props.data} baseCase = {this.props.baseCase} scenario = {this.props.scenario}/>   //The Sanity Check page, in SanityCheck.js
             case 3:
