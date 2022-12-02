@@ -17,7 +17,11 @@ class App extends React.Component {
     this.state = { page: 0 };
     this.setPage = this.setPage.bind(this);
   }
-
+  callAPI() {
+    fetch("http://localhost:9000/testAPI")
+        .then(res => res.text())
+        .then(res => this.setState({ apiResponse: res }));
+  }
   setPage(page) {
     this.setState({page: page});
     // pages 1 and 2 should be inaccessible before login. We could potentially make it impossible to see page 0 after login as well, for simplicity's sake

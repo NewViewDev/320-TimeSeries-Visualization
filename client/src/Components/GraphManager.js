@@ -1,8 +1,5 @@
 
 import React from "react";
-import ToggleButton from 'react-bootstrap/ToggleButton';
-import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup';
-import Nav from 'react-bootstrap/Nav'
 
 
 import ScatterLMP from "./GraphFolder/ScatterLMP";
@@ -27,13 +24,12 @@ class GraphManager extends React.Component {
                 console.log(this.props.data)
                 return <ScatterLMP data = {this.props.data}/>   //The initial page, in Home.js
             case 2:
-                return <HistogramTest data = {this.props.data}/>   //The Sanity Check page, in SanityCheck.js
+                return <HistogramTest data = {this.props.data} baseCase = {this.props.baseCase} scenario = {this.props.scenario}/>   //The Sanity Check page, in SanityCheck.js
             case 3:
                 return <HeatmapMonthly data = {this.props.data} baseCase = {this.props.baseCase} scenario = {this.props.scenario}/>  //The Anaylsis page, in Anaylsis.js
             default:
                 console.log(this.props.data)
                 return <ScatterLMP data = {this.props.data}/>
-                break;
         }
     }
 
