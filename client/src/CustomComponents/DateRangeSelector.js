@@ -20,9 +20,9 @@ class DateRangeSelector extends React.Component {
         }
     }
     handleSelect(ranges){
-        console.log(ranges.selection);
         this.setState({selection: ranges.selection});
     }
+
     render(){
         return (
             <div id={this.state.id} className={"dropdown" + (this.state.open ? " open" : "") + " " + this.props.className} onClick={this.drop}>

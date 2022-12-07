@@ -9,6 +9,8 @@ import NavElement from "../CustomComponents/NavbarElement"
 import NodeDropdown from "../Components/NodeDropdown";
 import GraphManager from "../Components/GraphManager";
 
+import DateRangeSelector from "../CustomComponents/DateRangeSelector";
+
 class SanityCheckPage extends React.Component {
   constructor(props) {
     super(props);
@@ -70,6 +72,7 @@ class SanityCheckPage extends React.Component {
   render() {
     return(
       <>
+        <DateRangeSelector></DateRangeSelector>
         <DatabaseDropdown fetch="http://localhost:4000/api/v1/data/scenarios" buttonName = "Scenario" onSelect = {this.onScenarioClick}>Select Scenario</DatabaseDropdown>
         <DatabaseDropdown fetch="http://localhost:4000/api/v1/data/scenarios" buttonName = "BaseCase" onSelect = {this.onBaseClick}>Select BaseCase</DatabaseDropdown>
         <Button className="action" onClick = {this.onSubmitClick}>Check</Button>
@@ -92,6 +95,7 @@ class SanityCheckPage extends React.Component {
           {this.state.scenario}
           {this.state.base}
           {this.state.node}
+
         </Container>
       </>
     );

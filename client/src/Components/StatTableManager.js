@@ -5,10 +5,10 @@ function genRow(date, mean, std, median, keyValue){
     return (
         <tbody key = {keyValue}>
             <tr>
-                <td>{date}|</td>
-                <td>{mean}|</td>
-                <td>{std}|</td>
-                <td>{median}</td>
+                <td className="darkfont">{date}</td>
+                <td className="darkfont">{mean}</td>
+                <td className="darkfont">{std}</td>
+                <td className="darkfont">{median}</td>
             </tr>
         </tbody>
     )
@@ -152,12 +152,13 @@ class StatTableManager extends React.Component {
                 <table striped bordered hover>
                     <thead onClick={this.handleAll}>
                         <tr>
-                            <th>Date</th>
-                            <th>Mean</th>
-                            <th>STD</th>
-                            <th>Median</th>
+                            <th className="darkfont">Date</th>
+                            <th className="darkfont">Mean</th>
+                            <th className="darkfont">STD</th>
+                            <th className="darkfont">Median</th>
                         </tr>
                     </thead>
+                    
                 </table>   
                 {this.genTable()}
             </div>

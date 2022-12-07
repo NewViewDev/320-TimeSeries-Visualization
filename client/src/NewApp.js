@@ -11,6 +11,8 @@ import SanityPage from "./NewPages/SanityCheck"
 import AnalysisPage from "./NewPages/Anaylsis"
 import logo from "./Components/Images/1200px-ISO_New_England.png"
 
+import DateRangeSelector from "./CustomComponents/DateRangeSelector";
+
 class App extends React.Component {
   constructor(props) {
     super(props);
