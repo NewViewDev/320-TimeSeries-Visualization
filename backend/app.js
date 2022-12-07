@@ -6,8 +6,6 @@ require("dotenv").config();
 
 require("express-async-errors");
 const morgan = require("morgan");
-const dotenv = require("dotenv");
-dotenv.config();
 
 const nodeRouter = require("./routes/nodeRoutes");
 const scenarioRouter = require("./routes/scenarioRoutes");

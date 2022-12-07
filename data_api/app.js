@@ -8,8 +8,6 @@ const prisma = require("./utils/prisma");
 
 require("express-async-errors");
 const morgan = require("morgan");
-const dotenv = require("dotenv");
-dotenv.config();
 
 const dataRouter = require("./routes/dataRoutes");
 const errorHandlerMiddleware = require("./utils/error-handler");

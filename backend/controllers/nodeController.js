@@ -87,7 +87,7 @@ exports.getNode = async (req, res) => {
       ],
     });
   } else {
-    nodes = await dataLayer.post("data/find/nodes", {
+    nodes = await dataLayer.post("/data/find/nodes", {
       where: {
         PNODE_NAME: PNODE_NAME,
         OR: [{ SCENARIO_ID: SCENARIO_ID_1 }, { SCENARIO_ID: SCENARIO_ID_2 }],
@@ -196,7 +196,7 @@ async function nodeGroup(
   GROUPBY,
   LMP_RANGE
 ) {
-  let nodes = await dataLayer.post("data/find/nodes", {
+  let nodes = await dataLayer.post("/data/find/nodes", {
     where: {
       SCENARIO_ID: SCENARIO_ID,
       PNODE_NAME: PNODE_NAME,
