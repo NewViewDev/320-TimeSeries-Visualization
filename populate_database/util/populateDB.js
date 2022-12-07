@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Node = require("../models/Node");
 const Scenario = require("../models/Scenario");
-require("dotenv").config();
+const Generator = require("../models/Generator");
 
 const fs = require("fs");
 const path = require("path");
@@ -34,21 +34,56 @@ async function createScenario(SCENARIO_ID, SCENARIO_NAME, AUTHOR_GROUP_ID) {
   });
 }
 
-const node_stream = fs
+async function createGenerator(
+  PNODE,
+  NAME,
+  TYPE,
+  LOAD_ZONE,
+  DISPATCH_ZONE,
+  RESERVE_ZONE,
+  FUEL
+) {
+  await Generator.create({
+    PNODE,
+    NAME,
+    TYPE,
+    LOAD_ZONE,
+    DISPATCH_ZONE,
+    RESERVE_ZONE,
+    FUEL,
+  });
+}
+
+const generator_stream = fs
   .createReadStream(
-    path.resolve(__dirname, "../dummy-data/", "dummy-data-3.7.csv")
+    path.resolve(__dirname, "../dummy-data2/", "dummy-generators.csv")
   )
   .pipe(csv.parse({ headers: true }))
   .on("error", (error) => console.error(error))
   .on("data", (row) => {
-    const { SCENARIO_ID, PNODE_NAME, PERIOD_ID, LMP } = row;
-    node_stream.pause();
+    generator_stream.pause();
     setTimeout(() => {
-      node_stream.resume();
+      generator_stream.resume();
     }, 2);
-    createNode(SCENARIO_ID, PNODE_NAME, PERIOD_ID, LMP);
+    createGenerator(...Object.values(row));
   })
   .on("end", (rowCount) => console.log(`Parsed ${rowCount} rows`));
+
+// const node_stream = fs
+//   .createReadStream(
+//     path.resolve(__dirname, "../dummy-data/", "dummy-data-3.7.csv")
+//   )
+//   .pipe(csv.parse({ headers: true }))
+//   .on("error", (error) => console.error(error))
+//   .on("data", (row) => {
+//     const { SCENARIO_ID, PNODE_NAME, PERIOD_ID, LMP } = row;
+//     node_stream.pause();
+//     setTimeout(() => {
+//       node_stream.resume();
+//     }, 2);
+//     createNode(SCENARIO_ID, PNODE_NAME, PERIOD_ID, LMP);
+//   })
+//   .on("end", (rowCount) => console.log(`Parsed ${rowCount} rows`));
 
 // fs.createReadStream(
 //   path.resolve(__dirname, "../dummy-data/", "dummy-scenarios.csv")

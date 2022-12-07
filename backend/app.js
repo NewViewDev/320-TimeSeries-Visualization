@@ -9,7 +9,10 @@ const morgan = require("morgan");
 const dotenv = require("dotenv");
 dotenv.config();
 
-const dataRouter = require("./routes/dataRoutes");
+const nodeRouter = require("./routes/nodeRoutes");
+const scenarioRouter = require("./routes/scenarioRoutes");
+const generatorRouter = require("./routes/generatorRoutes");
+
 const errorHandlerMiddleware = require("./utils/error-handler");
 
 if (process.env.NODE_ENV !== "production") {
@@ -18,7 +21,9 @@ if (process.env.NODE_ENV !== "production") {
 
 app.use(express.json());
 
-app.use("/api/v1/data", dataRouter);
+app.use("/api/v1/data/nodes", nodeRouter);
+app.use("/api/v1/data/scenarios", scenarioRouter);
+app.use("/api/v1/data/generators", generatorRouter);
 
 app.use(errorHandlerMiddleware);
 
