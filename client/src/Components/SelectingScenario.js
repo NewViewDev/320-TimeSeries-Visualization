@@ -80,9 +80,9 @@ class SelectingScenario extends React.Component {//the number of items following
     }
 
     chartData(){
-        if(this.state.selectedScenario == '1'){
+        if(this.state.selectedScenario === '1'){
             return [{x:1, y:1}, {x:2, y:2}]
-        } else if (this.state.selectedScenario == '2'){
+        } else if (this.state.selectedScenario === '2'){
             return [{x:1, y:1}, {x:4, y:4}]
         } else{
             return [{x:1, y:1}, {x:2, y:2}, {x:3, y:1}, {x:4, y:4}]

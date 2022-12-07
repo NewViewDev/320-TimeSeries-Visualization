@@ -1,6 +1,16 @@
 import React from "react";
 import Chart from "react-apexcharts"
 
+
+//Finds the mean for an array 
+function mean(arr){
+    let sum = 0;
+    for(let i = 0; i < arr.length; i++){
+        sum += arr[i];
+    }
+    return (sum/arr.length)
+}
+
 //takes in an array that represents the data and outputs a series for percentages for each bin the data falls into
 function bin(min, max, numberOfBins, arr){ //this current implementation has max exclusive
     let total = 0;
@@ -13,6 +23,7 @@ function bin(min, max, numberOfBins, arr){ //this current implementation has max
         resultCountArray[whichBinNumber]++;
     }
 
+    console.log(resultCountArray);
     for(let i = 0; i < resultCountArray.length; i++){
         total += (resultCountArray[i]/arr.length * 100)
         resultCountArray[i] = {x: min + (.5 * binsize) + (binsize * i), y: resultCountArray[i]/arr.length * 100};
@@ -24,11 +35,65 @@ function bin(min, max, numberOfBins, arr){ //this current implementation has max
   
 function whichBin(min, max, numberOfBins, number){//decides which bin
       let binsize = (1.0 * (max-min))/numberOfBins
+      // console.log(binsize)
       return Math.floor((number-min)/binsize)
 }
 
+function manageData(arr, scenario, baseCase){
+    let min = Number.POSITIVE_INFINITY;
+    let max = Number.NEGATIVE_INFINITY;
+    // let dataMap = new Map();
+    // for(let i = 0; i < arr.length; i++){
+    //     let currNode = arr[i];
+    //     let scenarioID = currNode["SCENARIO_ID"];
+    //     let periodID = currNode["PERIOD_ID"];
+    //     let value = currNode["LMP"];
+    //     let aggregatedPeriod = PeriodFinder(periodID, 'month');
+    //     if (dataMap.get(aggregatedPeriod) === undefined) {
+    //         let arr = [[],[]]
+    //         dataMap.set(aggregatedPeriod, arr)
+    //     }
+    //     let entry = dataMap.get(aggregatedPeriod)
+    //     if(scenarioID == scenario){
+    //         entry[0].push(value) //entry[0] stores the scenario
+    //     }
+    //     if(scenarioID == baseCase){
+    //         entry[1].push(value) //entry[1] stores the basecase
+    //     }
+    // }
+    let data = [[], []];
+    let dataIterator = arr.values();
+    let dataEntry = dataIterator.next();
+    while(!dataEntry.done) {
+        if(dataEntry.value[0].length != 0){
+            let scenarioLMP = mean(dataEntry.value[0]);
+            data[0].push(scenarioLMP);
+            if(scenarioLMP <= min){
+              min = scenarioLMP;
+            }
+            if(scenarioLMP >= max){
+                max = scenarioLMP;
+            }
+        }
+        if(dataEntry.value[1].length != 0){
+            let baseLMP = mean(dataEntry.value[1]);
+            data[1].push(baseLMP)
+            if(baseLMP <= min){
+              min = baseLMP;
+            }
+            if(baseLMP >= max){
+                max = baseLMP;
+            }
+        }
+        dataEntry = dataIterator.next();
+    }
+    max = Math.ceil(max + .0001)
+    min = Math.floor(min);
+    return [data, min, max];
+}
+
 //takes in the result from the endpoints and converts it into something usuable because currently the basecase and scenario node info are not split up, it also returns the min and max values used for the histogram
-function manageData(arr){
+function manageData2(arr){
     let min = Number.POSITIVE_INFINITY;
     let max = Number.NEGATIVE_INFINITY;
     let dataMap = new Map();//stores a map that maps scenarioID -> List of LMPs
@@ -41,6 +106,7 @@ function manageData(arr){
             dataMap.set(scenarioID, arr)
         } else {            
             dataMap.get(scenarioID).push(value)
+            
         }
         if(value <= min){
             min = value;
@@ -49,6 +115,7 @@ function manageData(arr){
             max = value;
         }
     }
+    
     //We iterate through the list of LMPs and put the results in an array called data, so data[0] has the list of LMPs for one and data[1] has the list of LMPs for the other
     let data = [];
     let dataIterator = dataMap.values();
@@ -81,11 +148,13 @@ class HistogramTest extends React.Component{
 
     //Generates the series for the histogram
     generateSeries(whichPlot){//a function since the series updates whenever we get new data
-        let dataArr = manageData(this.props.data);
+        let dataArr = manageData(this.props.data, this.props.scenario, this.props.baseCase);
         let data = dataArr[0];
         let min = dataArr[1];
         let max = dataArr[2];
-
+        if(this.props.baseCase == this.props.scenario){
+          whichPlot = 0;
+        }
         return [{
             name: "LMP",
             data: bin(min, max, 10, data[whichPlot])
@@ -95,7 +164,7 @@ class HistogramTest extends React.Component{
 
     //Generates the options list(sets the min and max of the histogram)
     generateOptions(){//a function since the options updates whenever we get new data
-        let dataArr = manageData(this.props.data);
+        let dataArr = manageData(this.props.data, this.props.scenario, this.props.baseCase);
         let data = dataArr[0];
         let min = dataArr[1];
         let max = dataArr[2];

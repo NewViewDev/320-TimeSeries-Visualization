@@ -2,7 +2,7 @@
     position: relative;
     width: fit-content;
     min-width: 100px;
-    padding-right: 2.5em;
+    padding-right: 2.5em !important;
 }
 
 .dropdown::before {
@@ -20,7 +20,7 @@
 .dropdown.open::before {
     transform: translateY(-50%) rotate(0deg);
 }
-.dropdown.open::after {
+.dropdown-search.open::after {
     content: '|';
     /* content: '';
     position: relative;
@@ -65,7 +65,17 @@
     pointer-events: none;
     z-index: 10000000;
 }
-.options.open {
+.date-range {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    opacity: 0;
+    transition: all .2s;
+    transform: translateY(-5px);
+    pointer-events: none;
+    z-index: 10000000;
+}
+.options.open, .date-range.open {
     opacity: 100%;
     transform: translateY(0px);
     pointer-events: all;
