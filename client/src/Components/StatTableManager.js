@@ -158,9 +158,8 @@ class StatTableManager extends React.Component {
                             <th className="darkfont">Median</th>
                         </tr>
                     </thead>
-                    
-                </table>   
-                {this.genTable()}
+                    {this.genTable()}
+                </table>
             </div>
             
         );
