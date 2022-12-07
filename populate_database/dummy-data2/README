@@ -1,0 +1,26 @@
+November 9, 2022
+
+Generators and cleared supply data
+====================================
+
+
+    dummy-node-data2.csv
+
+    Adds a new column MW, which contains the power supplied
+    at that pnode by a generator.  If the column is empty,
+    there was no power supplied.
+
+
+    dummy-generators.csv
+
+    A list of generators and their attributes.  You connect 
+    a generator to the node data via it's pnode attribute.
+
+With this new data, you now have two measures to use in both
+use cases: LMP and MW.
+
+In addition, you have new set of generator attributes you can
+use to create the summary statistics.  For example, you can 
+compute the average LMP, by generator fuel type, for 2 pm 
+US/Eastern.  Or average power supplied, grouped by load zone i
+for the entire data set.
