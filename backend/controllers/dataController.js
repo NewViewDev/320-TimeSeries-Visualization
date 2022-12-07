@@ -12,10 +12,10 @@ const dataLayer = axios.create({
 
 // Get distinct node names
 exports.getNodeNames = async (req, res) => {
-  const START_DATE = DateTime.fromISO("2020-07-01T01:00:00", {
+  const START_DATE = DateTime.fromISO("2020-12-01T01:00:00", {
     zone: "UTC+0",
   }).toJSDate();
-  const END_DATE = DateTime.fromISO("2020-07-02T00:00:00", {
+  const END_DATE = DateTime.fromISO("2020-12-02T00:00:00", {
     zone: "UTC+0",
   }).toJSDate();
 
