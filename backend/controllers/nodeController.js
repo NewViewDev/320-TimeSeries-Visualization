@@ -83,7 +83,7 @@ exports.getNode = async (req, res) => {
         {
           SCENARIO_ID: "asc",
         },
-        { LMP: "asc" },
+        { PERIOD_ID: "asc" },
       ],
     });
   } else {
@@ -101,7 +101,7 @@ exports.getNode = async (req, res) => {
         {
           SCENARIO_ID: "asc",
         },
-        { LMP: "asc" },
+        { PERIOD_ID: "asc" },
       ],
     });
   }

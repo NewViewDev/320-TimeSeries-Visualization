@@ -9,7 +9,7 @@ import NodeDropdown from "../Components/NodeDropdown";
 import StatTableManager from "../Components/StatTableManager";
 
 //generates the fetch command to the server
-function genFetch2(ScenarioID, Interval, minuteOffset, StartDate, EndDate, Metric){
+function genFetch2(ScenarioID, Interval, minuteOffset, StartDate, EndDate, Metric, PnodeID){
   let offset = minuteOffset/60
   let startID = extractPeriod(StartDate)
   let endID = extractPeriod(EndDate)
@@ -19,6 +19,7 @@ function genFetch2(ScenarioID, Interval, minuteOffset, StartDate, EndDate, Metri
   toFetch += '&START_DATE='+ startID
   // toFetch += '&END_DATE=2020-12-03T01:00:00'
   toFetch += '&END_DATE='+endID
+  toFetch += '&PNODE_NAME='+PnodeID//'.I.KENT    345 2'
   toFetch += '&FIELD=' + Metric
   toFetch += '&INTERVAL=' + Interval
   toFetch += '&OFFSET=' + offset;
@@ -68,7 +69,7 @@ class AnaylsisPage extends React.Component {
     this.setState({node: value})
   }
 
-  async handleDaily(scenario, metric){ //needs to check to make sure it actually handles daylight saving properly
+  async handleDaily(scenario, metric, pnodeID){ //needs to check to make sure it actually handles daylight saving properly
     // /api/v1/data/nodes/group?SCENARIO_ID=1&START_DATE=2020-07-01T01:00:00&END_DATE=2020-12-03T01:00:00&FIELD=LMP&INTERVAL=daily&OFFSET=0
     let startDate = new Date(2020, 1, 1, 1);
     let endDate = new Date(2020, 10, 5, 0);
@@ -87,8 +88,8 @@ class AnaylsisPage extends React.Component {
             console.log(startInterval.toUTCString() + ' ' + currEndInterval.toUTCString())
             //make an iff to make sure that start and curr interval are not the same currently
             if(startInterval.getTime() != currEndInterval.getTime()){
-                console.log(genFetch2(scenario, 'daily', offset, startInterval, currEndInterval, metric));
-                let toFetch = genFetch2(scenario, 'daily', offset, startInterval, currEndInterval, metric);
+                console.log(genFetch2(scenario, 'daily', offset, startInterval, currEndInterval, metric, pnodeID));
+                let toFetch = genFetch2(scenario, 'daily', offset, startInterval, currEndInterval, metric, pnodeID);
                 let response =  await fetch(toFetch).then(res => res.json()) 
                 currArray = currArray.concat(response['data'])
             }
@@ -100,12 +101,12 @@ class AnaylsisPage extends React.Component {
         nextInterval.setDate(nextInterval.getDate() + 1)
     }
         console.log(startInterval + ' ' + currEndInterval)
-        console.log(genFetch2(1, 'daily', offset, startInterval, currEndInterval, metric));
+        console.log(genFetch2(1, 'daily', offset, startInterval, currEndInterval, metric, pnodeID));
     if(nextInterval.getTimezoneOffset() != offset){
         console.log(currEndInterval + ' ' + nextInterval)
         offset = nextInterval.getTimezoneOffset();
     }
-    let toFetch = genFetch2(scenario, 'daily', offset, startInterval, currEndInterval, metric);
+    let toFetch = genFetch2(scenario, 'daily', offset, startInterval, currEndInterval, metric, pnodeID);
     let response =  await fetch(toFetch).then(res => res.json()) 
     currArray = currArray.concat(response['data'])
     // console.log(currArray)
@@ -115,7 +116,7 @@ class AnaylsisPage extends React.Component {
     })
   }
 
-  async handleMonthly(scenario, metric){ //needs to check to make sure it actually handles daylight saving properly
+  async handleMonthly(scenario, metric, pnodeID){ //needs to check to make sure it actually handles daylight saving properly
     // /api/v1/data/nodes/group?SCENARIO_ID=1&START_DATE=2020-07-01T01:00:00&END_DATE=2020-12-03T01:00:00&FIELD=LMP&INTERVAL=daily&OFFSET=0
     let startDate = new Date(2020, 1, 1, 1); //start at zero instead, just move to 1 afterwards,
     let endDate = new Date(2020, 11, 5, 0);
@@ -171,8 +172,9 @@ class AnaylsisPage extends React.Component {
       let currMetric = this.state.metric //These options are stored rather than direct passing something like this.state.metric so that nothing changes unless the user presses submit
       let currTimePeriod = this.state.timePeriod
       let currScenario = this.state.scenario
+      let currPnode = this.state.node
       if(currTimePeriod == 'Daily'){
-        this.handleDaily(currScenario, currMetric);
+        this.handleDaily(currScenario, currMetric, currPnode);
       } else {
         this.handleMonthly(currScenario, currMetric);
       }
