@@ -135,8 +135,8 @@ class AnaylsisPage extends React.Component {
             console.log(startInterval.toUTCString() + ' ' + currEndInterval.toUTCString())
             //make an iff to make sure that start and curr interval are not the same currently
             if(startInterval.getTime() != currEndInterval.getTime()){
-                console.log(genFetch2(scenario, 'monthly', offset, startInterval, currEndInterval, metric));
-                let toFetch = genFetch2(scenario, 'monthly', offset, startInterval, currEndInterval, metric);
+                console.log(genFetch2(scenario, 'monthly', offset, startInterval, currEndInterval, metric, pnodeID));
+                let toFetch = genFetch2(scenario, 'monthly', offset, startInterval, currEndInterval, metric, pnodeID);
                 let response =  await fetch(toFetch).then(res => res.json()) 
                 currArray = currArray.concat(response['data'])
             }
@@ -148,12 +148,12 @@ class AnaylsisPage extends React.Component {
         nextInterval.setMonth(nextInterval.getMonth() + 1, 1)
     }
         console.log(startInterval + ' ' + currEndInterval)
-        console.log(genFetch2(1, 'monthly', offset, startInterval, currEndInterval, metric));
+        console.log(genFetch2(1, 'monthly', offset, startInterval, currEndInterval, metric, pnodeID));
     if(nextInterval.getTimezoneOffset() != offset){
         console.log(currEndInterval + ' ' + nextInterval)
         offset = nextInterval.getTimezoneOffset();
     }
-    let toFetch = genFetch2(scenario, 'monthly', offset, startInterval, currEndInterval, metric);
+    let toFetch = genFetch2(scenario, 'monthly', offset, startInterval, currEndInterval, metric, pnodeID);
     let response =  await fetch(toFetch).then(res => res.json()) 
     currArray = currArray.concat(response['data'])
     // console.log(currArray)
