@@ -47,7 +47,7 @@ class SanityCheckPage extends React.Component {
     console.log('CLICKED2')
     if(this.state.scenario != undefined && this.state.base != undefined && this.state.node != undefined){
       let toFetch = "http://localhost:4000/api/v1/data/nodes";
-      toFetch += "?PNODE_NAME="+this.state.node+"&SCENARIO_ID_1="+this.state.scenario+"&SCENARIO_ID_2="+this.state.base+"&FIELD=LMP"
+      toFetch += "?PNODE_NAME="+this.state.node+"&SCENARIO_ID_1="+this.state.scenario+"&SCENARIO_ID_2="+this.state.base+"&FIELD=LMP"+"&START_DATE="+this.state.ranges.startDate.toISOString().split(".")[0]+"&END_DATE="+this.state.ranges.endDate.toISOString().split(".")[0]
       console.log(toFetch);
       let selectedScenario = this.state.scenario;
       let selectedBase = this.state.base;

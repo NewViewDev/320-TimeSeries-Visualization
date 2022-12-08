@@ -122,7 +122,7 @@ class AnaylsisPage extends React.Component {
               {/* Manages how */}
               {/*<StatTableManager data = {this.state.apiRes} metric = {this.state.selectedMetric} timePeriod = {this.state.selectedTimePeriod}/>*/}
 
-              <AnalyticsTable></AnalyticsTable>
+              {/*<AnalyticsTable></AnalyticsTable>*/}
               
             </Container>
 
