@@ -15,6 +15,7 @@ class SanityCheckPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = { page: 1};
+    this.state.ranges = {startDate: '', endDate: '', key: 'selection'};
     this.setPage = this.setPage.bind(this);
     this.onScenarioClick = this.onScenarioClick.bind(this);
     this.onBaseClick = this.onBaseClick.bind(this);
@@ -72,7 +73,7 @@ class SanityCheckPage extends React.Component {
   render() {
     return(
       <>
-        <DateRangeSelector></DateRangeSelector>
+        <DateRangeSelector setRange={val => {this.setState({ranges: val})}} ranges={[this.state.selection]}></DateRangeSelector>
         <DatabaseDropdown fetch="http://localhost:4000/api/v1/data/scenarios" buttonName = "Scenario" onSelect = {this.onScenarioClick}>Select Scenario</DatabaseDropdown>
         <DatabaseDropdown fetch="http://localhost:4000/api/v1/data/scenarios" buttonName = "BaseCase" onSelect = {this.onBaseClick}>Select BaseCase</DatabaseDropdown>
         <Button className="action" onClick = {this.onSubmitClick}>Check</Button>

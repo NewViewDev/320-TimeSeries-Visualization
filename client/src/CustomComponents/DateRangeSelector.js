@@ -20,7 +20,9 @@ class DateRangeSelector extends React.Component {
         }
     }
     handleSelect(ranges){
+        console.log(ranges.selection.startDate.toISOString().split(".")[0])
         this.setState({selection: ranges.selection});
+        this.props.setRange(ranges.selection)
     }
 
     render(){

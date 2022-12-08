@@ -5,6 +5,7 @@
     color: white;
     width: 100%;
     box-sizing: border-box;
+    margin-bottom: 50px;
 }
 .container.light {
     color: black !important;
@@ -18,8 +19,22 @@
     background: white;
     color: black;
 }
+
 .container.sub {
     width: 45%;
     height: 100%;
     display: inline-block;
+}
+
+.container.grid {
+    display: grid;
+    grid-template-areas: "a b";
+}
+
+.a {
+    grid-area: a;
+}
+
+.b {
+    grid-area: b;
 }

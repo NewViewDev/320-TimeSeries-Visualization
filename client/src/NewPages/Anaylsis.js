@@ -9,14 +9,16 @@ import NodeDropdown from "../Components/NodeDropdown";
 import StatTableManager from "../Components/StatTableManager";
 import DateRangeSelector from "../CustomComponents/DateRangeSelector";
 
+import AnalyticsTable from "../Components/AnalyticsTable";
+
 //generates the fetch command to the server
 function genFetch(ScenarioID, Metric, Node, startDate, endDate){
   let toFetch = "http://localhost:4000/api/v1/data/nodes";
   toFetch += "?PNODE_NAME=" + Node; 
   toFetch += "&SCENARIO_ID_1=" + ScenarioID + "&SCENARIO_ID_2=" + ScenarioID;
   toFetch += "&FIELD=" + Metric;
-  toFetch += "&START_DATE=" + startDate;
-  toFetch += "&END_DATE=" + endDate;
+  toFetch += "&START_DATE=" + startDate.toISOString().split(".")[0];
+  toFetch += "&END_DATE=" + endDate.toISOString().split(".")[0];
   return toFetch;
 }
 
@@ -30,7 +32,7 @@ class AnaylsisPage extends React.Component {
     this.onTimePeriodClick = this.onTimePeriodClick.bind(this);
     this.onNodeClick = this.onNodeClick.bind(this);
     this.onGenerateSubmit = this.onGenerateSubmit.bind(this);
-    this.onDateClick = this.onDateClick.bind(this);
+    //this.onDateClick = this.onDateClick.bind(this);
   }
 
   //When the user selects a scenario, the state is updated to contain the user's selection
@@ -38,9 +40,9 @@ class AnaylsisPage extends React.Component {
     this.setState({scenario: value})
   }
 
-  onDateClick(ranges) {
-    this.setState({selection: ranges.selection});
-  }
+  //onDateClick(ranges) {
+    //this.setState({selection: ranges.selection});
+  //}
 
   //When the user selects a metric, the state is updated to contain the user's selection
   onMetricClick(value){
@@ -80,12 +82,11 @@ class AnaylsisPage extends React.Component {
 
   render() {
     return(
-      <Container>
-          <div>
+      <Container className="grid">
 
-            <Container className="sub">
+            <Container className="a">
 
-              <DateRangeSelector onChange= {this.onDateClick} ranges={[this.state.selection]}></DateRangeSelector>
+              <DateRangeSelector setRange={val => {this.setState({ranges: val})}} ranges={[this.state.selection]}></DateRangeSelector>
 
                 {/* The options the user can select from */}
                 <div>
@@ -96,18 +97,21 @@ class AnaylsisPage extends React.Component {
                   <br/>
                   <Dropdown list ={["ALL", "Yearly","Quarterly","Monthly","Weekly","Daily", "Hourly"]} onSelect={this.onTimePeriodClick}>Select Time Period</Dropdown>
                   <br/>
-                  <Dropdown list ={["Type", "Load Zone","Dispatch Zone","Reserve Zone","Fuel Type"]}>Select Grouping</Dropdown>
-                  <br/>
+
                   {/* <Dropdown list ={["Node 1","Node 2","Node 2341","Node 2351","Node 23511", "Node 11111"]}>Select PNode Grouping</Dropdown> */}
                   {/* <NodeDropdown fetch="http://localhost:4000/api/v1/data/nodes/name" buttonName = "PNodes" onSelect = {this.onNodeClick}></NodeDropdown> */}
                   <NodeDropdown fetch="http://localhost:4000/api/v1/data/nodes/name" buttonName = "PNodes" onSelect = {this.onNodeClick}></NodeDropdown>
+                  <br/>
+
+                  <Dropdown list ={["Type", "Load Zone","Dispatch Zone","Reserve Zone","Fuel Type"]}>Select Grouping</Dropdown>
+                  <br/>
                 </div>
 
               <Button className="action" onClick = {this.onGenerateSubmit}>Generate</Button>
 
             </Container>
 
-            <Container className="grey sub">
+            <Container className="grey b">
               <h4 className="darkfont">Please generate a report</h4>
               {/* Just prints out what the user currently has selected */}
               {this.state.scenario}
@@ -116,14 +120,11 @@ class AnaylsisPage extends React.Component {
               {this.state.node}
               {this.state.selection}
               {/* Manages how */}
-              <StatTableManager data = {this.state.apiRes} metric = {this.state.selectedMetric} timePeriod = {this.state.selectedTimePeriod}/>
+              {/*<StatTableManager data = {this.state.apiRes} metric = {this.state.selectedMetric} timePeriod = {this.state.selectedTimePeriod}/>*/}
 
+              <AnalyticsTable></AnalyticsTable>
               
             </Container>
-
-          </div>
-        
-
 
 
       </Container>
