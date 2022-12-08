@@ -9,10 +9,10 @@ const dataLayer = require("../utils/axios-setup");
 
 // Get distinct node names
 exports.getNodeNames = async (req, res) => {
-  const START_DATE = DateTime.fromISO("2020-07-01T01:00:00", {
+  const START_DATE = DateTime.fromISO("2020-12-01T01:00:00", {
     zone: "UTC+0",
   }).toJSDate();
-  const END_DATE = DateTime.fromISO("2020-07-02T00:00:00", {
+  const END_DATE = DateTime.fromISO("2020-12-02T00:00:00", {
     zone: "UTC+0",
   }).toJSDate();
 
@@ -83,7 +83,7 @@ exports.getNode = async (req, res) => {
         {
           SCENARIO_ID: "asc",
         },
-        { LMP: "asc" },
+        { PERIOD_ID: "asc" },
       ],
     });
   } else {
@@ -101,7 +101,7 @@ exports.getNode = async (req, res) => {
         {
           SCENARIO_ID: "asc",
         },
-        { LMP: "asc" },
+        { PERIOD_ID: "asc" },
       ],
     });
   }

@@ -163,7 +163,7 @@ class HistogramTest extends React.Component{
     }
 
     //Generates the options list(sets the min and max of the histogram)
-    generateOptions(){//a function since the options updates whenever we get new data
+    generateOptions(id){//a function since the options updates whenever we get new data
         let dataArr = manageData(this.props.data, this.props.scenario, this.props.baseCase);
         let data = dataArr[0];
         let min = dataArr[1];
@@ -172,14 +172,20 @@ class HistogramTest extends React.Component{
         return {
             plotOptions:{
                 bar:{
-                    columnWidth: '100%'
+                    columnWidth: '100%',
                 }
             },
             chart: {
-              type: 'bar',
-              zoom: {
-                enabled: false
-              }
+                type: 'bar',
+                // id: id,
+                // group: 'histographs',
+                zoom: {
+                    enabled: false
+                }
+            },
+            tooltip: {
+                shared: true,
+                intersect: false
             },
             title: {
               text: "LMP Histogram Scenario 1(Base Case)"
@@ -196,7 +202,7 @@ class HistogramTest extends React.Component{
               min: min,
               max: max,
               type: 'numeric',
-              tickPlacement: 'on',
+              tickPlacement: true,
               tickAmount: 20,
               labels: {
                 rotate: -45,
@@ -227,8 +233,8 @@ class HistogramTest extends React.Component{
 
         return (
             <div>
-                <Chart options={this.generateOptions()} series = {this.generateSeries(0)} type = "bar" height = "380" width="600"/>
-                <Chart options={this.generateOptions()} series = {this.generateSeries(1)} type = "bar" height = "380" width="600"/>
+                <Chart options={this.generateOptions('base')} series = {this.generateSeries(0)} type = "bar" height = "380" width="600"/>
+                <Chart options={this.generateOptions('scatter')} series = {this.generateSeries(1)} type = "bar" height = "380" width="600"/>
             </div>
         )
     }

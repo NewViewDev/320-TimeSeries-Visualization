@@ -14,7 +14,8 @@ function mean(arr){
 
 
 function manageData2(arr, scenario, baseCase){//takes the data recieved from the server and makes it into a form usuable by graphs
-
+    let min = Number.POSITIVE_INFINITY;
+    let max = Number.NEGATIVE_INFINITY;
     let data = [];
     let dataIterator = arr.values();
     // let dataIterator = dataMap.values();
@@ -24,10 +25,22 @@ function manageData2(arr, scenario, baseCase){//takes the data recieved from the
             let scenarioLMP = mean(dataEntry.value[0]);
             let baseLMP = mean(dataEntry.value[1]);
             data.push([scenarioLMP, baseLMP]);
+            if(baseLMP <= min){
+                min = baseLMP;
+              }
+            if(baseLMP >= max){
+                max = baseLMP;
+            }
+            if(scenarioLMP <= min){
+                min = scenarioLMP;
+            }
+            if(scenarioLMP >= max){
+                max = scenarioLMP;
+            }
         }
         dataEntry = dataIterator.next();
     }
-    return data;
+    return [data, min, max];
 }
 
 class ScatterLMP extends React.Component{
@@ -73,7 +86,7 @@ class ScatterLMP extends React.Component{
         // let dataArr = manageData(this.props.data);
         // console.log(this.props.scenario);
         console.log(this.props);
-        let dataArr = manageData2(this.props.data, this.props.scenario, this.props.baseCase);
+        let dataArr = manageData2(this.props.data, this.props.scenario, this.props.baseCase)[0];
         return [{
             name: "Base Case vs Scatter",
             data: dataArr
@@ -83,6 +96,8 @@ class ScatterLMP extends React.Component{
 
     generateOptions(){ //generates the series with the data, the reason a function is that the series needs to be regenerated whenever updated because it recieves new data when updated if we want to specificy a new min or max diffent from the default
         // let dataArr = manageData(this.props.data);
+        let min = manageData2(this.props.data, this.props.scenario, this.props.baseCase)[1]
+        let max = manageData2(this.props.data, this.props.scenario, this.props.baseCase)[2]
         return {//essentially default options for charts in Apex charts
             chart: {
                 type: 'scatter',
@@ -97,7 +112,7 @@ class ScatterLMP extends React.Component{
                 
             },
             xaxis: {
-                min: 25,
+                min: min,
                 tickAmount: 10,
                 labels: {
                     formatter: function(val) {
@@ -106,7 +121,7 @@ class ScatterLMP extends React.Component{
                 }
             },
             yaxis: {
-                min: 25,
+                min: min,
                 tickAmount: 10,
                 labels: {
                     formatter: function(val) {
@@ -118,6 +133,7 @@ class ScatterLMP extends React.Component{
     }
 
     render(){
+        
         return (
             <div>
                 <Chart options={this.generateOptions()} series={this.generateSeries()} type="scatter" height = "600" width = "600"/>
