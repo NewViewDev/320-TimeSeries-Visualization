@@ -188,7 +188,7 @@ class HistogramTest extends React.Component{
                 intersect: false
             },
             title: {
-              text: "LMP Histogram Scenario 1(Base Case)"
+              text: "LMP Histogram (Base Case)"
             },
             dataLabels: {
               enabled: true,
@@ -212,7 +212,7 @@ class HistogramTest extends React.Component{
                 }
               },
               title: {
-                text: "LMP (Base Case/Scenario 1)"
+                text: "LMP (Base Case/Scenario)"
               }
             },
               yaxis: {

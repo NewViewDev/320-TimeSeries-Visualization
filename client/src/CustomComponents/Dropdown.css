@@ -64,6 +64,8 @@
     transform: translateY(-5px);
     pointer-events: none;
     z-index: 10000000;
+    max-height: 250px;
+    overflow-y: scroll;
 }
 .date-range {
     position: absolute;

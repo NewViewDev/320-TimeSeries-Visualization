@@ -173,8 +173,7 @@ class StatTableManager extends React.Component {
                         </tr>
                     </thead>
                     {this.genTable()}
-                </table>  
-                 
+                </table>
             </div>
             
         );

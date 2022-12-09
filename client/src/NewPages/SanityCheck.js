@@ -9,10 +9,13 @@ import NavElement from "../CustomComponents/NavbarElement"
 import NodeDropdown from "../Components/NodeDropdown";
 import GraphManager from "../Components/GraphManager";
 
+import DateRangeSelector from "../CustomComponents/DateRangeSelector";
+
 class SanityCheckPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = { page: 1};
+    this.state.ranges = {startDate: '', endDate: '', key: 'selection'};
     this.setPage = this.setPage.bind(this);
     this.onScenarioClick = this.onScenarioClick.bind(this);
     this.onBaseClick = this.onBaseClick.bind(this);
@@ -44,7 +47,7 @@ class SanityCheckPage extends React.Component {
     console.log('CLICKED2')
     if(this.state.scenario != undefined && this.state.base != undefined && this.state.node != undefined){
       let toFetch = "http://localhost:4000/api/v1/data/nodes";
-      toFetch += "?PNODE_NAME="+this.state.node+"&SCENARIO_ID_1="+this.state.scenario+"&SCENARIO_ID_2="+this.state.base+"&FIELD=LMP"
+      toFetch += "?PNODE_NAME="+this.state.node+"&SCENARIO_ID_1="+this.state.scenario+"&SCENARIO_ID_2="+this.state.base+"&FIELD=LMP"+"&START_DATE="+this.state.ranges.startDate.toISOString().split(".")[0]+"&END_DATE="+this.state.ranges.endDate.toISOString().split(".")[0]
       console.log(toFetch);
       let selectedScenario = this.state.scenario;
       let selectedBase = this.state.base;
@@ -70,6 +73,7 @@ class SanityCheckPage extends React.Component {
   render() {
     return(
       <>
+        <DateRangeSelector setRange={val => {this.setState({ranges: val})}} ranges={[this.state.selection]}></DateRangeSelector>
         <DatabaseDropdown fetch="http://localhost:4000/api/v1/data/scenarios" buttonName = "Scenario" onSelect = {this.onScenarioClick}>Select Scenario</DatabaseDropdown>
         <DatabaseDropdown fetch="http://localhost:4000/api/v1/data/scenarios" buttonName = "BaseCase" onSelect = {this.onBaseClick}>Select BaseCase</DatabaseDropdown>
         <Button className="action" onClick = {this.onSubmitClick}>Check</Button>
@@ -92,6 +96,7 @@ class SanityCheckPage extends React.Component {
           {this.state.scenario}
           {this.state.base}
           {this.state.node}
+
         </Container>
       </>
     );
