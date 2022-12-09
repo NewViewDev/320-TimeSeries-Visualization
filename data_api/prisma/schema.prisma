@@ -29,3 +29,14 @@ model groups {
   GROUP_ID String @id @map("_id") 
   GROUP_NAME String
 }
+
+model generators {
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  PNODE String
+  NAME String
+  TYPE String
+  LOAD_ZONE String
+  DISPATCH_ZONE String
+  RESERVE_ZONE String
+  FUEL String
+}

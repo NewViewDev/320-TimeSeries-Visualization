@@ -1,21 +1,18 @@
 const { StatusCodes } = require("http-status-codes");
 
-const axios = require("axios");
 const math = require("mathjs");
 const { DateTime } = require("luxon");
 
 const { NotFoundError, BadRequestError } = require("../errors");
 
-const dataLayer = axios.create({
-  baseURL: process.env.DATALAYER_URL,
-});
+const dataLayer = require("../utils/axios-setup");
 
 // Get distinct node names
 exports.getNodeNames = async (req, res) => {
-  const START_DATE = DateTime.fromISO("2020-07-01T01:00:00", {
+  const START_DATE = DateTime.fromISO("2020-12-01T01:00:00", {
     zone: "UTC+0",
   }).toJSDate();
-  const END_DATE = DateTime.fromISO("2020-07-02T00:00:00", {
+  const END_DATE = DateTime.fromISO("2020-12-02T00:00:00", {
     zone: "UTC+0",
   }).toJSDate();
 
@@ -44,26 +41,6 @@ exports.getNodeNames = async (req, res) => {
   }
   res.status(StatusCodes.OK).json({ data: { nodes } });
 };
-
-// Get scenario ids and names
-exports.getScenarios = async (req, res) => {
-  let scenarios = await dataLayer.post("/data/find/scenarios", {});
-
-  if (scenarios.status != 200) {
-    throw new Error("Data Layer ERROR");
-  }
-
-  scenarios = scenarios.data;
-  scenarios = scenarios.map((s) => ({
-    SCENARIO_ID: s.SCENARIO_ID,
-    SCENARIO_NAME: s.SCENARIO_NAME,
-  }));
-  if (scenarios.length == 0) {
-    throw new NotFoundError("No scenario with specified filters");
-  }
-  res.status(StatusCodes.OK).json({ data: { scenarios } });
-};
-
 
 // Get data points for specified node with two scenarios
 exports.getNode = async (req, res) => {
@@ -110,7 +87,7 @@ exports.getNode = async (req, res) => {
       ],
     });
   } else {
-    nodes = await dataLayer.post("data/find/nodes", {
+    nodes = await dataLayer.post("/data/find/nodes", {
       where: {
         PNODE_NAME: PNODE_NAME,
         OR: [{ SCENARIO_ID: SCENARIO_ID_1 }, { SCENARIO_ID: SCENARIO_ID_2 }],
@@ -136,7 +113,9 @@ exports.getNode = async (req, res) => {
 
   res.status(StatusCodes.OK).json({ length: nodes.length, data: { nodes } });
 };
-exports.getNodeGroup = async (req, res) => {
+
+// Group for specific node name
+exports.getGroup = async (req, res) => {
   promise = [];
   let {
     SCENARIO_ID,
@@ -147,6 +126,8 @@ exports.getNodeGroup = async (req, res) => {
     LMP_RANGE,
     INTERVAL,
     OFFSET,
+    PNODE_NAME,
+    DST,
   } = req.query;
 
   if (!SCENARIO_ID || !START_DATE || !END_DATE) {
@@ -169,8 +150,13 @@ exports.getNodeGroup = async (req, res) => {
       interval = 24 * daysInYear(start.getUTCFullYear());
     }
 
+    if (DST) {
+      interval += parseInt(DST);
+    }
+
     promise.push(
       nodeGroup(
+        PNODE_NAME,
         SCENARIO_ID,
         addHours(start, OFFSET),
         addHours(start, interval + OFFSET - 1),
@@ -202,6 +188,7 @@ function daysInYear(year) {
 }
 
 async function nodeGroup(
+  PNODE_NAME,
   SCENARIO_ID,
   START_DATE,
   END_DATE,
@@ -209,11 +196,10 @@ async function nodeGroup(
   GROUPBY,
   LMP_RANGE
 ) {
-  // extract params from url
-
-  let nodes = await dataLayer.post("data/find/nodes", {
+  let nodes = await dataLayer.post("/data/find/nodes", {
     where: {
       SCENARIO_ID: SCENARIO_ID,
+      PNODE_NAME: PNODE_NAME,
       PERIOD_ID: {
         gte: START_DATE,
         lte: END_DATE,
@@ -240,9 +226,9 @@ async function nodeGroup(
     groups = group_int("LMP", groups, LMP_RANGE.split(","));
   }
 
-  if (GROUPBY?.includes("PNODE_NAME")) {
-    groups = group_string("PNODE_NAME", groups);
-  }
+  // if (GROUPBY?.includes("PNODE_NAME")) {
+  //   groups = group_string("PNODE_NAME", groups);
+  // }
 
   for (const group in groups) {
     const values = groups[group].map((node) => node["LMP"]);
@@ -289,6 +275,13 @@ function group_string(FIELD, groups) {
   return groups;
 }
 
+/**
+ * Groups by given ranges
+ * @param {String} FIELD
+ * @param {object} groups
+ * @param {String[]} query
+ * @returns
+ */
 function group_int(FIELD, groups, query) {
   for (const group in groups) {
     let arr = groups[group];
