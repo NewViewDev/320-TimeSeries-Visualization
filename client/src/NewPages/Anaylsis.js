@@ -12,13 +12,14 @@ import DateRangeSelector from "../CustomComponents/DateRangeSelector";
 import AnalyticsTable from "../Components/AnalyticsTable";
 
 //generates the fetch command to the server
-function genFetch(ScenarioID, Metric, Node, startDate, endDate){
-  let toFetch = "http://localhost:4000/api/v1/data/nodes";
-  toFetch += "?PNODE_NAME=" + Node; 
-  toFetch += "&SCENARIO_ID_1=" + ScenarioID + "&SCENARIO_ID_2=" + ScenarioID;
-  toFetch += "&FIELD=" + Metric;
-  toFetch += "&START_DATE=" + startDate.toISOString().split(".")[0];
-  toFetch += "&END_DATE=" + endDate.toISOString().split(".")[0];
+// function genFetch(ScenarioID, Metric, Node, startDate, endDate){
+//   let toFetch = "http://localhost:4000/api/v1/data/nodes";
+//   toFetch += "?PNODE_NAME=" + Node; 
+//   toFetch += "&SCENARIO_ID_1=" + ScenarioID + "&SCENARIO_ID_2=" + ScenarioID;
+//   toFetch += "&FIELD=" + Metric;
+//   toFetch += "&START_DATE=" + startDate.toISOString().split(".")[0];
+//   toFetch += "&END_DATE=" + endDate.toISOString().split(".")[0];
+// }
   
 function genFetch2(ScenarioID, Interval, minuteOffset, StartDate, EndDate, Metric, PnodeID){
   let offset = minuteOffset/60
@@ -186,7 +187,7 @@ class AnaylsisPage extends React.Component {
   onGenerateSubmit(){
     //Fetches the the data for the selected options
     if(this.state.scenario != undefined && this.state.metric != undefined && this.state.timePeriod != undefined && this.state.node != undefined){
-      let toFetch = genFetch(this.state.scenario, this.state.metric, this.state.node, this.state.ranges.startDate, this.state.ranges.endDate);
+      // let toFetch = genFetch(this.state.scenario, this.state.metric, this.state.node, this.state.ranges.startDate, this.state.ranges.endDate);
       let currMetric = this.state.metric //These options are stored rather than direct passing something like this.state.metric so that nothing changes unless the user presses submit
       let currTimePeriod = this.state.timePeriod
       let currScenario = this.state.scenario
@@ -194,7 +195,7 @@ class AnaylsisPage extends React.Component {
       if(currTimePeriod == 'Daily'){
         this.handleDaily(currScenario, currMetric, currPnode);
       } else {
-        this.handleMonthly(currScenario, currMetric);
+        this.handleMonthly(currScenario, currMetric, currPnode);
       }
     }
   }
@@ -202,7 +203,7 @@ class AnaylsisPage extends React.Component {
   render() {
     return(
       <Container className="grid">
-
+          <div>
             <Container className="a">
 
               <DateRangeSelector setRange={val => {this.setState({ranges: val})}} ranges={[this.state.selection]}></DateRangeSelector>
