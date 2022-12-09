@@ -29,19 +29,19 @@ function createData(timeperiod, mean, median, std) {
 }
 
 const rows = [
-  createData('Cupcake', 305, 3.7, 67),
-  createData('Donut', 452, 25.0, 51),
-  createData('Eclair', 262, 16.0, 24),
-  createData('Frozen yoghurt', 159, 6.0, 24),
-  createData('Gingerbread', 356, 16.0, 49),
-  createData('Honeycomb', 408, 3.2, 87),
-  createData('Ice cream sandwich', 237, 9.0, 37),
-  createData('Jelly Bean', 375, 0.0, 94),
-  createData('KitKat', 518, 26.0, 65),
-  createData('Lollipop', 392, 0.2, 98),
-  createData('Marshmallow', 318, 0, 81),
-  createData('Nougat', 360, 19.0, 9),
-  createData('Oreo', 437, 18.0, 63),
+  createData('2020-02-01T01:00:00.000Z-2020-02-02T24:00:00.000Z', 305, 3.7, 67),
+  createData('2020-02-02T01:00:00.000Z-2020-02-03T24:00:00.000Z', 452, 25.0, 51),
+  createData('2020-02-03T01:00:00.000Z-2020-02-04T24:00:00.000Z', 262, 16.0, 24),
+  createData('2020-02-04T01:00:00.000Z-2020-02-05T24:00:00.000Z', 159, 6.0, 24),
+  createData('2020-02-05T01:00:00.000Z-2020-02-06T24:00:00.000Z', 356, 16.0, 49),
+  createData('2020-02-06T01:00:00.000Z-2020-02-07T24:00:00.000Z', 408, 3.2, 87),
+  createData('2020-02-07T01:00:00.000Z-2020-02-08T24:00:00.000Z', 237, 9.0, 37),
+  createData('2020-02-08T01:00:00.000Z-2020-02-09T24:00:00.000Z', 375, 0.0, 94),
+  createData('2020-02-09T01:00:00.000Z-2020-02-10T24:00:00.000Z', 518, 26.0, 65),
+  // createData('Lollipop', 392, 0.2, 98),
+  // createData('Marshmallow', 318, 0, 81),
+  // createData('Nougat', 360, 19.0, 9),
+  // createData('Oreo', 437, 18.0, 63),
 ];
 
 function descendingComparator(a, b, orderBy) {

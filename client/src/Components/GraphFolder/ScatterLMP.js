@@ -64,6 +64,9 @@ class ScatterLMP extends React.Component{
                     size:0,
                 },
                 xaxis: {
+                    title:{
+                        text: 'Base Case LMP'
+                    },
                     min: 0,
                     tickAmount: 10,
                     labels: {
@@ -73,6 +76,9 @@ class ScatterLMP extends React.Component{
                     }
                 },
                 yaxis: {
+                    title:{
+                        text: 'Scenario LMP'
+                    },
                     min: 25,
                 }
             },
@@ -112,6 +118,10 @@ class ScatterLMP extends React.Component{
                 
             },
             xaxis: {
+                title:{
+                    text: 'Base Case LMP',
+                    offsetY: 80
+                },
                 min: min,
                 tickAmount: 10,
                 labels: {
@@ -121,6 +131,9 @@ class ScatterLMP extends React.Component{
                 }
             },
             yaxis: {
+                title:{
+                    text: 'Scenario LMP',
+                },
                 min: min,
                 tickAmount: 10,
                 labels: {

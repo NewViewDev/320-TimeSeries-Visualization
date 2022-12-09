@@ -168,7 +168,6 @@ class HistogramTest extends React.Component{
         let data = dataArr[0];
         let min = dataArr[1];
         let max = dataArr[2];
-        
         return {
             plotOptions:{
                 bar:{
@@ -188,7 +187,7 @@ class HistogramTest extends React.Component{
                 intersect: false
             },
             title: {
-              text: "LMP Histogram (Base Case)"
+              text: "LMP Histogram " + "(" + id + ")"
             },
             dataLabels: {
               enabled: true,
@@ -212,10 +211,14 @@ class HistogramTest extends React.Component{
                 }
               },
               title: {
-                text: "LMP (Base Case/Scenario)"
+                text: "LMP of " + id,
+                offsetY: 100
               }
             },
               yaxis: {
+                title: {
+                    text: "Percentage"
+                },
                 min: 0,
                 max: 100,
                 tickAmount: 5,
@@ -233,8 +236,8 @@ class HistogramTest extends React.Component{
 
         return (
             <div>
-                <Chart options={this.generateOptions('base')} series = {this.generateSeries(0)} type = "bar" height = "380" width="600"/>
-                <Chart options={this.generateOptions('scatter')} series = {this.generateSeries(1)} type = "bar" height = "380" width="600"/>
+                <Chart options={this.generateOptions('Base Case')} series = {this.generateSeries(0)} type = "bar" height = "380" width="600"/>
+                <Chart options={this.generateOptions('Scenario')} series = {this.generateSeries(1)} type = "bar" height = "380" width="600"/>
             </div>
         )
     }
