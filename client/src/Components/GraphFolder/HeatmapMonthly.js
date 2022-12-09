@@ -146,12 +146,22 @@ class HeatmapMonthly extends React.Component{
                     }
                 },
                 title: {
-                  text: 'HeatMap Chart (Single color)'
+                  text: 'MAPE HeatMap'
                 },
                 xaxis: {
                     type: 'category',
                     categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], 
                     tickAmount: 12,
+                    title: {
+                        text: 'Month',
+                        offsetY: 80
+                    }
+
+                },
+                yaxis: {
+                    title: {
+                        text: 'Hours'
+                    }
 
                 },
             },

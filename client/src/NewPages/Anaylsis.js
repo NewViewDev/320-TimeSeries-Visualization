@@ -203,7 +203,6 @@ class AnaylsisPage extends React.Component {
   render() {
     return(
       <Container className="grid">
-          <div>
             <Container className="a">
 
               <DateRangeSelector setRange={val => {this.setState({ranges: val})}} ranges={[this.state.selection]}></DateRangeSelector>
@@ -240,10 +239,9 @@ class AnaylsisPage extends React.Component {
               {this.state.node}
               {this.state.selection}
               {/* Manages how */}
-              {/*<AnalyticsTable></AnalyticsTable>*/}
+              {/* <AnalyticsTable></AnalyticsTable> */}
               <StatTableManager data = {this.state.apiRes} metric = {this.state.selectedMetric} timePeriod = {this.state.selectedTimePeriod}/>
             </Container>
-          </div>
       </Container>
 
     );
