@@ -14,8 +14,10 @@ import DateRangeSelector from "../CustomComponents/DateRangeSelector";
 class SanityCheckPage extends React.Component {
   constructor(props) {
     super(props);
+    let endDate = new Date();
+    endDate.setHours(0, 0, 0, 0)
     this.state = { page: 1};
-    this.state.ranges = {startDate: '', endDate: '', key: 'selection'};
+    this.state.ranges = {startDate: new Date(0), endDate: endDate, key: 'selection'};
     this.setPage = this.setPage.bind(this);
     this.onScenarioClick = this.onScenarioClick.bind(this);
     this.onBaseClick = this.onBaseClick.bind(this);
@@ -46,24 +48,23 @@ class SanityCheckPage extends React.Component {
   onSubmitClick() {
     console.log('CLICKED2')
     if(this.state.scenario != undefined && this.state.base != undefined && this.state.node != undefined){
+      let startDate = new Date(this.state.ranges.startDate.getTime());//We need to set the start and end so that it starts at 1 and ends at 24 aka 00:00 of the next day
+      let endDate = new Date(this.state.ranges.endDate.getTime());
+      startDate.setTime(startDate.getTime() + (1 * 60 * 60 * 1000)) //done this way so daylight saving dosen't potentially mess up the time
+      endDate.setDate(endDate.getDate() + 1)
+      console.log(startDate)
+      console.log(endDate)
       let toFetch = "http://localhost:4000/api/v1/data/nodes";
-      toFetch += "?PNODE_NAME="+this.state.node+"&SCENARIO_ID_1="+this.state.scenario+"&SCENARIO_ID_2="+this.state.base+"&FIELD=LMP"+"&START_DATE="+this.state.ranges.startDate.toISOString().split(".")[0]+"&END_DATE="+this.state.ranges.endDate.toISOString().split(".")[0]
+      toFetch += "?PNODE_NAME="+this.state.node+"&SCENARIO_ID_1="+this.state.scenario+"&SCENARIO_ID_2="+this.state.base+"&FIELD=LMP"+"&START_DATE="+startDate.toISOString().split(".")[0]+"&END_DATE="+endDate.toISOString().split(".")[0]
       console.log(toFetch);
       let selectedScenario = this.state.scenario;
       let selectedBase = this.state.base;
       fetch(toFetch)
         .then(res => res.json()) //converts to json
         .then(res => {
-          // console.log(res)
-          // manageData(res["data"]["nodes"])
           console.log(res["data"]["nodes"]);
           this.setState({ 
-              // apiResponse: res["data"]["nodes"]
-              apiRes: [res["data"]["nodes"], selectedScenario, selectedBase]
-                  // <div>
-                  //     <GraphManager data = {res["data"]["nodes"]} baseCase = {selectedBase} scenario = {selectedScenario}/> 
-                  // </div>   
-                  
+              apiRes: [res["data"]["nodes"], selectedScenario, selectedBase]  
           })
       });
         
