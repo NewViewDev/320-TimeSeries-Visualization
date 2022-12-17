@@ -198,6 +198,59 @@ class AnaylsisPage extends React.Component {
     })
   }
 
+  async handleYear(scenario, metric, pnodeID){ //needs to check to make sure it actually handles daylight saving properly
+    let startDate = new Date(2019, 1, 1, 0); //start at zero instead, just move to 1 afterwards,
+    let endDate = new Date(2021, 11, 1, 0);
+
+    let startInterval = new Date(startDate.getTime())
+    
+    let currEndInterval = new Date(startDate.getTime())
+    let nextInterval = new Date(startDate.getTime())
+    nextInterval.setMonth(nextInterval.getDate() + 1, 1)
+    let offset = startDate.getTimezoneOffset();
+
+    let currArray = [];
+    while(currEndInterval < endDate){//I think < not <= so that endDate is exclusive
+        //if the time between the currEndInteveral and nextInterval is daylight savings
+        if(nextInterval.getTimezoneOffset() != offset){
+            //make an iff to make sure that start and curr interval are not the same currently
+            if(startInterval.getTime() != currEndInterval.getTime()){
+                console.log(genFetch2(scenario, 'monthly', offset, startInterval, currEndInterval, metric, pnodeID));
+                let toFetch = genFetch2(scenario, 'monthly', offset, startInterval, currEndInterval, metric, pnodeID);
+                let response =  await fetch(toFetch).then(res => res.json()) 
+                if(response['data'] != undefined)
+                  currArray = currArray.concat(response['data'])
+            }
+            let toFetchDstChange = genFetch2(scenario, 'monthly', offset, currEndInterval, nextInterval, metric, pnodeID, nextInterval.getTimezoneOffset() - currEndInterval.getTimezoneOffset());
+            let response2 =  await fetch(toFetchDstChange).then(res => res.json()) 
+            if(response2['data'] != undefined)
+              currArray.push(response2['data'][0])
+            offset = nextInterval.getTimezoneOffset();
+            startInterval = new Date(nextInterval.getTime());
+        }
+        currEndInterval.setMonth(currEndInterval.getMonth() + 1, 1)
+        nextInterval.setMonth(nextInterval.getMonth() + 1, 1)
+    }
+    let toFetch = genFetch2(scenario, 'monthly', offset, startInterval, currEndInterval, metric, pnodeID);
+    let response =  await fetch(toFetch).then(res => res.json()) 
+    if(response['data'] != undefined)
+      currArray = currArray.concat(response['data'])
+    if(nextInterval.getTimezoneOffset() != offset){
+        console.log('hi');
+        let toFetchDstChange = genFetch2(scenario, 'monthly', offset, currEndInterval, nextInterval, metric, pnodeID, nextInterval.getTimezoneOffset() - currEndInterval.getTimezoneOffset());
+        let response2 =  await fetch(toFetchDstChange).then(res => res.json()) 
+        if(response2['data'] != undefined)
+          currArray.push(response2['data'][0])
+        offset = nextInterval.getTimezoneOffset();
+        startInterval = new Date(nextInterval.getTime());
+    }
+
+    this.setState({
+      apiRes: currArray,
+      selectedMetric: metric
+    })
+  }
+
 
   //Move button into the statTableManager to make things easier
   //When the user presses submit, the client fetches the releavant info from the server

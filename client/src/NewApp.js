@@ -11,19 +11,14 @@ import SanityPage from "./NewPages/SanityCheck"
 import AnalysisPage from "./NewPages/Anaylsis"
 import logo from "./Components/Images/1200px-ISO_New_England.png"
 
-import DateRangeSelector from "./CustomComponents/DateRangeSelector";
-
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { page: 0 };
+    this.state = { page: 0 }; //represents the current page we want displayed
     this.setPage = this.setPage.bind(this);
   }
-  callAPI() {
-    fetch("http://localhost:9000/testAPI")
-        .then(res => res.text())
-        .then(res => this.setState({ apiResponse: res }));
-  }
+
+  //This function is called when a NavBar button is clicked and this.state.page is updated to the new page we want displayed
   setPage(page) {
     this.setState({page: page});
     // pages 1 and 2 should be inaccessible before login. We could potentially make it impossible to see page 0 after login as well, for simplicity's sake
@@ -31,6 +26,7 @@ class App extends React.Component {
 
   render() {
     return(
+        //switches the pages depending on which of the NavBar buttons are currently selected
         <Container fullPage>
             <Navbar>
                 <NavElement>
@@ -42,7 +38,7 @@ class App extends React.Component {
                     <Dropdown noSelect onSelect={() => {this.setPage(0)}} className="dark" list={['Logout']}>Profile</Dropdown>
                 </NavElement>
             </Navbar>
-            {/* This may want to decide visibility instead of rendering to save current states; in other words, have the conditional affect the styling of the pages rather than whether or not to render them */}
+            {/* Renders the correct page according to the current value of this.state.page */}
             {this.state.page === 0 && <LoginPage></LoginPage>}
             {this.state.page === 1 && <SanityPage></SanityPage>}
             {this.state.page === 2 && <AnalysisPage></AnalysisPage>}
