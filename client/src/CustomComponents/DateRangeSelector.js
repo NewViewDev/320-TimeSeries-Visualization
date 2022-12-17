@@ -9,7 +9,7 @@ class DateRangeSelector extends React.Component {
     static id=0;
     constructor(props) {
         super(props);
-        this.state = {value: false, open: false, id: "dropdown-" + DateRangeSelector.id, selection: {startDate: new Date(), endDate: new Date(), key: 'selection'}}
+        this.state = {value: false, open: false, id: "dropdown-" + DateRangeSelector.id, selection: {startDate: undefined, endDate: undefined, key: 'selection'}}
         this.handleSelect = this.handleSelect.bind(this);
         this.drop = this.drop.bind(this);
         DateRangeSelector.id++;
