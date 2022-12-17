@@ -10,16 +10,6 @@ import StatTableManager from "../Components/StatTableManager";
 import DateRangeSelector from "../CustomComponents/DateRangeSelector";
 
 import AnalyticsTable from "../Components/AnalyticsTable";
-
-//generates the fetch command to the server
-// function genFetch(ScenarioID, Metric, Node, startDate, endDate){
-//   let toFetch = "http://localhost:4000/api/v1/data/nodes";
-//   toFetch += "?PNODE_NAME=" + Node; 
-//   toFetch += "&SCENARIO_ID_1=" + ScenarioID + "&SCENARIO_ID_2=" + ScenarioID;
-//   toFetch += "&FIELD=" + Metric;
-//   toFetch += "&START_DATE=" + startDate.toISOString().split(".")[0];
-//   toFetch += "&END_DATE=" + endDate.toISOString().split(".")[0];
-// }
   
 function genFetch2(ScenarioID, Interval, minuteOffset, StartDate, EndDate, Metric, PnodeID, DST = 0){
   let offset = minuteOffset/60
@@ -34,7 +24,8 @@ function genFetch2(ScenarioID, Interval, minuteOffset, StartDate, EndDate, Metri
   toFetch += '&END_DATE='+endID
   toFetch += '&PNODE_NAME='+PnodeID//'.I.KENT    345 2'
   toFetch += '&FIELD=' + Metric
-  toFetch += '&INTERVAL=' + Interval
+  if(Interval != 'all')
+    toFetch += '&INTERVAL=' + Interval
   toFetch += '&OFFSET=' + offset;
   toFetch += '&DST=' + DST;
   return toFetch;
@@ -64,19 +55,16 @@ class AnaylsisPage extends React.Component {
     this.onTimePeriodClick = this.onTimePeriodClick.bind(this);
     this.onNodeClick = this.onNodeClick.bind(this);
     this.onGenerateSubmit = this.onGenerateSubmit.bind(this);
-    // this.onDateClick = this.onDateClick.bind(this);
     this.handleDaily = this.handleDaily.bind(this);
     this.handleMonthly = this.handleMonthly.bind(this);
+    this.handleYearly = this.handleYearly.bind(this);
+    this.handleAll = this.handleAll.bind(this);
   }
 
   //When the user selects a scenario, the state is updated to contain the user's selection
   onScenarioClick(value){
     this.setState({scenario: value})
   }
-
-  // onDateClick(ranges) {
-  //   this.setState({selection: ranges.selection});
-  // }
 
   //When the user selects a metric, the state is updated to contain the user's selection
   onMetricClick(value){
@@ -153,8 +141,6 @@ class AnaylsisPage extends React.Component {
     startDate.setDate(1);
     let endDate = new Date(this.state.ranges['endDate'].getTime());
     endDate.setDate(1);
-    // console.log(startDate + " " + endDate)
-    console.log(startDate + " " + endDate)
 
     let startInterval = new Date(startDate.getTime())
     
@@ -206,51 +192,39 @@ class AnaylsisPage extends React.Component {
     })
   }
 
-  async handleYear(scenario, metric, pnodeID){ //needs to check to make sure it actually handles daylight saving properly
-    let startDate = new Date(2019, 1, 1, 0); //start at zero instead, just move to 1 afterwards,
-    let endDate = new Date(2021, 11, 1, 0);
-
-    let startInterval = new Date(startDate.getTime())
-    
-    let currEndInterval = new Date(startDate.getTime())
-    let nextInterval = new Date(startDate.getTime())
-    nextInterval.setMonth(nextInterval.getDate() + 1, 1)
+  async handleYearly(scenario, metric, pnodeID){ //needs to check to make sure it actually handles daylight saving properly
+    let startDate = new Date(this.state.ranges['startDate'].getTime());
+    startDate.setFullYear(startDate.getFullYear(), 0, 1);
+    let endDate = new Date(this.state.ranges['endDate'].getTime());
+    endDate.setFullYear(endDate.getFullYear() + 1, 0, 1);
     let offset = startDate.getTimezoneOffset();
 
     let currArray = [];
-    while(currEndInterval < endDate){//I think < not <= so that endDate is exclusive
-        //if the time between the currEndInteveral and nextInterval is daylight savings
-        if(nextInterval.getTimezoneOffset() != offset){
-            //make an iff to make sure that start and curr interval are not the same currently
-            if(startInterval.getTime() != currEndInterval.getTime()){
-                console.log(genFetch2(scenario, 'monthly', offset, startInterval, currEndInterval, metric, pnodeID));
-                let toFetch = genFetch2(scenario, 'monthly', offset, startInterval, currEndInterval, metric, pnodeID);
-                let response =  await fetch(toFetch).then(res => res.json()) 
-                if(response['data'] != undefined)
-                  currArray = currArray.concat(response['data'])
-            }
-            let toFetchDstChange = genFetch2(scenario, 'monthly', offset, currEndInterval, nextInterval, metric, pnodeID, nextInterval.getTimezoneOffset() - currEndInterval.getTimezoneOffset());
-            let response2 =  await fetch(toFetchDstChange).then(res => res.json()) 
-            if(response2['data'] != undefined)
-              currArray.push(response2['data'][0])
-            offset = nextInterval.getTimezoneOffset();
-            startInterval = new Date(nextInterval.getTime());
-        }
-        currEndInterval.setMonth(currEndInterval.getMonth() + 1, 1)
-        nextInterval.setMonth(nextInterval.getMonth() + 1, 1)
+    if(startDate < endDate){//I think < not <= so that endDate is exclusive
+      let toFetch = genFetch2(scenario, 'yearly', offset, startDate, endDate, 'LMP', pnodeID);
+      console.log(toFetch)
+      let response =  await fetch(toFetch).then(res => res.json()) 
+      if(response['data'] != undefined)
+        currArray = currArray.concat(response['data'])
     }
-    let toFetch = genFetch2(scenario, 'monthly', offset, startInterval, currEndInterval, metric, pnodeID);
-    let response =  await fetch(toFetch).then(res => res.json()) 
-    if(response['data'] != undefined)
-      currArray = currArray.concat(response['data'])
-    if(nextInterval.getTimezoneOffset() != offset){
-        console.log('hi');
-        let toFetchDstChange = genFetch2(scenario, 'monthly', offset, currEndInterval, nextInterval, metric, pnodeID, nextInterval.getTimezoneOffset() - currEndInterval.getTimezoneOffset());
-        let response2 =  await fetch(toFetchDstChange).then(res => res.json()) 
-        if(response2['data'] != undefined)
-          currArray.push(response2['data'][0])
-        offset = nextInterval.getTimezoneOffset();
-        startInterval = new Date(nextInterval.getTime());
+
+    this.setState({
+      apiRes: currArray,
+      selectedMetric: metric
+    })
+  }
+
+  async handleAll(scenario, metric, pnodeID){
+    let startDate = new Date(this.state.ranges['startDate'].getTime())
+    let endDate = new Date(this.state.ranges['endDate'].getTime())
+    let offset = startDate.getTimezoneOffset();
+
+    let currArray = [];
+    if(startDate < endDate){//I think < not <= so that endDate is exclusive
+      let toFetch = genFetch2(scenario, 'all', offset, startDate, endDate, 'LMP', pnodeID, endDate.getTimezoneOffset() - startDate.getTimezoneOffset());
+      let response =  await fetch(toFetch).then(res => res.json()) 
+      if(response['data'] != undefined)
+        currArray = currArray.concat(response['data'])
     }
 
     this.setState({
@@ -272,8 +246,12 @@ class AnaylsisPage extends React.Component {
       let currPnode = this.state.node
       if(currTimePeriod == 'Daily'){
         this.handleDaily(currScenario, currMetric, currPnode);
-      } else {
+      } else if(currTimePeriod == 'Yearly') {
+        this.handleYearly(currScenario, currMetric, currPnode);
+      } else if(currTimePeriod == 'Monthly') {
         this.handleMonthly(currScenario, currMetric, currPnode);
+      } else {
+        this.handleAll(currScenario, currMetric, currPnode);
       }
     }
   }
@@ -292,7 +270,7 @@ class AnaylsisPage extends React.Component {
                   <br/>
                   <Dropdown list ={["LMP"]} onSelect={this.onMetricClick}>Select Metric</Dropdown>
                   <br/>
-                  <Dropdown list ={["ALL", "Yearly","Quarterly","Monthly","Weekly","Daily", "Hourly"]} onSelect={this.onTimePeriodClick}>Select Time Period</Dropdown>
+                  <Dropdown list ={["ALL", "Yearly","Monthly","Daily"]} onSelect={this.onTimePeriodClick}>Select Time Period</Dropdown>
                   <br/>
 
                   {/* <Dropdown list ={["Node 1","Node 2","Node 2341","Node 2351","Node 23511", "Node 11111"]}>Select PNode Grouping</Dropdown> */}
@@ -315,8 +293,6 @@ class AnaylsisPage extends React.Component {
               {this.state.metric}
               {this.state.timePeriod}
               {this.state.node}
-              {/* {this.state.ranges} */}
-              {/* Manages how */}
               {/* <AnalyticsTable></AnalyticsTable> */}
               <StatTableManager data = {this.state.apiRes} metric = {this.state.selectedMetric} timePeriod = {this.state.selectedTimePeriod}/>
             </Container>
