@@ -34,6 +34,7 @@ class DateRangeSelector extends React.Component {
                 <div className={"date-range " + (this.state.open ? "open" : "")}>
                     <DateRangePicker
                         ranges={[this.state.selection]}
+                        rangeColors={['#4A5E67']}
                         onChange={this.handleSelect}
                     />
                 </div>

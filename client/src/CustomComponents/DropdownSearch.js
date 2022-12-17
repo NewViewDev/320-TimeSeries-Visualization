@@ -18,7 +18,7 @@ class DropdownSearch extends React.Component {
     }
     search(event) {
         if(this.state.open) {
-            if(/^[A-Za-z0-9 ]$/.test(event.key)) {
+            if(/^[ -~]$/.test(event.key)) {
                 this.setState({search: this.state.search + event.key})
             } else if(event.key === "Backspace") {
                 this.setState({search: this.state.search.slice(0, -1)})
@@ -54,7 +54,7 @@ class DropdownSearch extends React.Component {
             <>
                 <input readOnly value={this.state.value ? this.state.value : ""} className="selection"/>
                 <div id={this.state.id} className={"dropdown dropdown-search" + (this.state.open ? " open" : "") + " " + this.props.className} onClick={this.drop}>
-                    <div style={{position: "absolute", color: "#fff5"}}>{this.state.value && this.state.search === '' ? this.state.value : ''}</div>
+                    <div style={{position: "absolute", color: "#fff5", pointerEvents: 'none'}}>{this.state.value && this.state.search === '' ? this.state.value : ''}</div>
                     {this.state.open ? this.state.search : (this.state.value ? this.state.value : this.props.children)}
                     
                     <div className={"options " + (this.state.open ? "open" : "")}>
