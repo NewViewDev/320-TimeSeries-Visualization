@@ -58,13 +58,13 @@ class AnaylsisPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {}
-    this.state.ranges = {startDate: '', endDate: '', key: 'selection'};
+    this.state.ranges = {startDate: new Date(2020, 2, 1, 0), endDate: new Date(2020, 10, 1, 0), key: 'selection'};
     this.onScenarioClick = this.onScenarioClick.bind(this);
     this.onMetricClick = this.onMetricClick.bind(this);
     this.onTimePeriodClick = this.onTimePeriodClick.bind(this);
     this.onNodeClick = this.onNodeClick.bind(this);
     this.onGenerateSubmit = this.onGenerateSubmit.bind(this);
-    //this.onDateClick = this.onDateClick.bind(this);
+    // this.onDateClick = this.onDateClick.bind(this);
     this.handleDaily = this.handleDaily.bind(this);
     this.handleMonthly = this.handleMonthly.bind(this);
   }
@@ -74,9 +74,9 @@ class AnaylsisPage extends React.Component {
     this.setState({scenario: value})
   }
 
-  //onDateClick(ranges) {
-    //this.setState({selection: ranges.selection});
-  //}
+  // onDateClick(ranges) {
+  //   this.setState({selection: ranges.selection});
+  // }
 
   //When the user selects a metric, the state is updated to contain the user's selection
   onMetricClick(value){
@@ -94,8 +94,11 @@ class AnaylsisPage extends React.Component {
   }
 
   async handleDaily(scenario, metric, pnodeID){ //needs to check to make sure it actually handles daylight saving properly
-    let startDate = new Date(2020, 1, 1, 0);
-    let endDate = new Date(2020, 9, 5, 0);
+    console.log(this.state.ranges)
+    let startDate = new Date(this.state.ranges['startDate'].getTime())
+    let endDate = new Date(this.state.ranges['endDate'].getTime())
+    // let startDate = new Date(2020, 1, 1, 0);
+    // let endDate = new Date(2020, 9, 5, 0);
 
     let startInterval = new Date(startDate.getTime()) //The start of the span of time
     
@@ -146,14 +149,18 @@ class AnaylsisPage extends React.Component {
   }
 
   async handleMonthly(scenario, metric, pnodeID){ //needs to check to make sure it actually handles daylight saving properly
-    let startDate = new Date(2020, 1, 1, 0); //start at zero instead, just move to 1 afterwards,
-    let endDate = new Date(2020, 10, 1, 0);
+    let startDate = new Date(this.state.ranges['startDate'].getTime());
+    startDate.setDate(1);
+    let endDate = new Date(this.state.ranges['endDate'].getTime());
+    endDate.setDate(1);
+    // console.log(startDate + " " + endDate)
+    console.log(startDate + " " + endDate)
 
     let startInterval = new Date(startDate.getTime())
     
     let currEndInterval = new Date(startDate.getTime())
     let nextInterval = new Date(startDate.getTime())
-    nextInterval.setMonth(nextInterval.getDate() + 1, 1)
+    nextInterval.setMonth(nextInterval.getMonth() + 1, 1)
     let offset = startDate.getTimezoneOffset();
 
     let currArray = [];
@@ -169,6 +176,7 @@ class AnaylsisPage extends React.Component {
                   currArray = currArray.concat(response['data'])
             }
             let toFetchDstChange = genFetch2(scenario, 'monthly', offset, currEndInterval, nextInterval, metric, pnodeID, nextInterval.getTimezoneOffset() - currEndInterval.getTimezoneOffset());
+            console.log(toFetchDstChange)
             let response2 =  await fetch(toFetchDstChange).then(res => res.json()) 
             if(response2['data'] != undefined)
               currArray.push(response2['data'][0])
@@ -275,7 +283,7 @@ class AnaylsisPage extends React.Component {
       <Container className="grid">
             <Container className="a">
 
-              <DateRangeSelector setRange={val => {this.setState({ranges: val})}} ranges={[this.state.selection]}></DateRangeSelector>
+              <DateRangeSelector setRange={val => {this.setState({ranges: val})}} ranges={[this.state.ranges]}></DateRangeSelector>
 
                 {/* The options the user can select from */}
                 <div>
@@ -307,7 +315,7 @@ class AnaylsisPage extends React.Component {
               {this.state.metric}
               {this.state.timePeriod}
               {this.state.node}
-              {this.state.selection}
+              {/* {this.state.ranges} */}
               {/* Manages how */}
               {/* <AnalyticsTable></AnalyticsTable> */}
               <StatTableManager data = {this.state.apiRes} metric = {this.state.selectedMetric} timePeriod = {this.state.selectedTimePeriod}/>
