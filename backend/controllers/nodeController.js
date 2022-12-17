@@ -130,7 +130,7 @@ exports.getGroup = async (req, res) => {
     DST,
   } = req.query;
 
-  if (!SCENARIO_ID || !START_DATE || !END_DATE) {
+  if (!SCENARIO_ID) {
     throw new BadRequestError("Please provide all values");
   }
 
@@ -138,38 +138,54 @@ exports.getGroup = async (req, res) => {
   END_DATE = DateTime.fromISO(END_DATE, { zone: "UTC+0" }).toJSDate();
   OFFSET = parseInt(OFFSET);
 
-  let start = new Date(START_DATE.getTime());
-  while (start < END_DATE) {
-    let interval;
-    if (INTERVAL === "daily") {
-      interval = 24;
-    } else if (INTERVAL === "monthly") {
-      var test = start.toISOString();
-      interval = 24 * getDays(start.getUTCFullYear(), start.getUTCMonth() + 1);
-    } else if (INTERVAL === "yearly") {
-      interval = 24 * daysInYear(start.getUTCFullYear());
+  arr = [];
+
+  if (INTERVAL) {
+    let start = new Date(START_DATE.getTime());
+    while (start < END_DATE) {
+      let interval;
+      if (INTERVAL === "daily") {
+        interval = 24;
+      } else if (INTERVAL === "monthly") {
+        var test = start.toISOString();
+        interval =
+          24 * getDays(start.getUTCFullYear(), start.getUTCMonth() + 1);
+      } else if (INTERVAL === "yearly") {
+        interval = 24 * daysInYear(start.getUTCFullYear());
+      }
+
+      if (DST) {
+        interval += parseInt(DST);
+      }
+
+      promise.push(
+        nodeGroup(
+          PNODE_NAME,
+          SCENARIO_ID,
+          addHours(start, OFFSET),
+          addHours(start, interval + OFFSET - 1),
+          FIELD,
+          GROUPBY,
+          LMP_RANGE
+        )
+      );
+      start = addHours(start, interval);
     }
 
-    if (DST) {
-      interval += parseInt(DST);
-    }
-
-    promise.push(
-      nodeGroup(
+    arr = await Promise.all(promise);
+  } else {
+    arr = [
+      await nodeGroup(
         PNODE_NAME,
         SCENARIO_ID,
-        addHours(start, OFFSET),
-        addHours(start, interval + OFFSET - 1),
+        START_DATE,
+        END_DATE,
         FIELD,
         GROUPBY,
         LMP_RANGE
-      )
-    );
-    start = addHours(start, interval);
+      ),
+    ];
   }
-
-  arr = [];
-  arr = await Promise.all(promise);
 
   res.status(StatusCodes.OK).json({ length: arr.length, data: [...arr] });
 };
