@@ -40,37 +40,51 @@ exports.getGeneratorGroup = async (req, res) => {
   START_DATE = DateTime.fromISO(START_DATE, { zone: "UTC+0" }).toJSDate();
   END_DATE = DateTime.fromISO(END_DATE, { zone: "UTC+0" }).toJSDate();
   OFFSET = parseInt(OFFSET);
+  let arr = [];
 
-  let start = new Date(START_DATE.getTime());
-  while (start < END_DATE) {
-    let interval;
-    if (INTERVAL === "daily") {
-      interval = 24;
-    } else if (INTERVAL === "monthly") {
-      interval = 24 * getDays(start.getUTCFullYear(), start.getUTCMonth() + 1);
-    } else if (INTERVAL === "yearly") {
-      interval = 24 * daysInYear(start.getUTCFullYear());
+  if (INTERVAL) {
+    let start = new Date(START_DATE.getTime());
+    while (start < END_DATE) {
+      let interval;
+      if (INTERVAL === "daily") {
+        interval = 24;
+      } else if (INTERVAL === "monthly") {
+        interval =
+          24 * getDays(start.getUTCFullYear(), start.getUTCMonth() + 1);
+      } else if (INTERVAL === "yearly") {
+        interval = 24 * daysInYear(start.getUTCFullYear());
+      }
+
+      if (DST) {
+        interval += parseInt(DST);
+      }
+
+      promise.push(
+        getFields(
+          SCENARIO_ID,
+          addHours(start, OFFSET),
+          addHours(start, interval + OFFSET - 1),
+          FIELD,
+          GROUPBY,
+          LMP_RANGE
+        )
+      );
+      start = addHours(start, interval);
     }
 
-    if (DST) {
-      interval += parseInt(DST);
-    }
-
-    promise.push(
-      getFields(
+    arr = await Promise.all(promise);
+  } else {
+    arr = [
+      await getFields(
         SCENARIO_ID,
-        addHours(start, OFFSET),
-        addHours(start, interval + OFFSET - 1),
+        addHours(START_DATE, OFFSET),
+        addHours(END_DATE, OFFSET),
         FIELD,
         GROUPBY,
         LMP_RANGE
-      )
-    );
-    start = addHours(start, interval);
+      ),
+    ];
   }
-
-  arr = [];
-  arr = await Promise.all(promise);
 
   res.status(StatusCodes.OK).json({ length: arr.length, data: [...arr] });
 };
