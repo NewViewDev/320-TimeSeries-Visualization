@@ -232,14 +232,7 @@ class AnaylsisPage extends React.Component {
 
             <Container className="grey b">
               <h4 className="darkfont">Please generate a report</h4>
-              {/* Just prints out what the user currently has selected */}
-              {this.state.scenario}
-              {this.state.metric}
-              {this.state.timePeriod}
-              {this.state.node}
-              {this.state.selection}
               {/* Manages how */}
-              {/* <AnalyticsTable></AnalyticsTable> */}
               <StatTableManager data = {this.state.apiRes} metric = {this.state.selectedMetric} timePeriod = {this.state.selectedTimePeriod}/>
             </Container>
       </Container>
