@@ -41,6 +41,9 @@ function whichQuarter(date){
 
 function PeriodFinder(periodID, aggregateType){
     let periodDate = extractDate(periodID);
+    if(periodDate.getHours() == 0){//since we provided data starts day at 1:00 and ends at 24:00, if the date returns a 0, then that is equvalient, the period of of the previous day
+        periodDate.setDate(periodDate.getDate() - 1);
+    }
     if(aggregateType == 'Monthly') {
         periodDate.setDate(1);
         periodDate.setHours(0);
@@ -61,7 +64,6 @@ function PeriodFinder(periodID, aggregateType){
                 periodDate.setMonth(9)
                 break;
             default:
-                console.log('ahhh')
                 break;
         }
         periodDate.setDate(1);

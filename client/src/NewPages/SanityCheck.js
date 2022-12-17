@@ -16,18 +16,19 @@ class SanityCheckPage extends React.Component {
     super(props);
     let endDate = new Date();
     endDate.setHours(0, 0, 0, 0)
-    this.state = { page: 1};
-    this.state.ranges = {startDate: new Date(0), endDate: endDate, key: 'selection'};
-    this.setPage = this.setPage.bind(this);
+    this.state = {graph: 1}; //Defaults to the first graph type aka scatter plot
+    this.state.ranges = {startDate: new Date(0), endDate: endDate, key: 'selection'}; //The timerange of the data, intialized to the start of unix time to the current day
+
+    //binds the functions so that they know what this.state is
+    this.setGraph = this.setGraph.bind(this);
     this.onScenarioClick = this.onScenarioClick.bind(this);
     this.onBaseClick = this.onBaseClick.bind(this);
     this.onNodeClick = this.onNodeClick.bind(this);
     this.onSubmitClick = this.onSubmitClick.bind(this);
-    console.log(this.onSubmitClick);
   }
 
-  setPage(page) {
-    this.setState({page: page});
+  setGraph(graph) {
+    this.setState({graph: graph});
   }
 
   onScenarioClick(value) {
@@ -46,7 +47,6 @@ class SanityCheckPage extends React.Component {
   }
 
   onSubmitClick() {
-    console.log('CLICKED2')
     if(this.state.scenario != undefined && this.state.base != undefined && this.state.node != undefined){
       let startDate = new Date(this.state.ranges.startDate.getTime());//We need to set the start and end so that it starts at 1 and ends at 24 aka 00:00 of the next day
       let endDate = new Date(this.state.ranges.endDate.getTime());
@@ -81,9 +81,9 @@ class SanityCheckPage extends React.Component {
         <br/><br/>
         <Container className="light">
           <Navbar height="50px">
-            <NavButton onClick={() => {this.setPage(1)}} active={this.state.page === 1}>Scatter</NavButton>
-            <NavButton onClick={() => {this.setPage(2)}} active={this.state.page === 2}>Histogram</NavButton>
-            <NavButton onClick={() => {this.setPage(3)}} active={this.state.page === 3}>Heat Map</NavButton>
+            <NavButton onClick={() => {this.setGraph(1)}} active={this.state.graph === 1}>Scatter</NavButton>
+            <NavButton onClick={() => {this.setGraph(2)}} active={this.state.graph === 2}>Histogram</NavButton>
+            <NavButton onClick={() => {this.setGraph(3)}} active={this.state.graph === 3}>Heat Map</NavButton>
             <NavElement float="right">
               {/* <Dropdown className="dark" list={[]}>Select PNode</Dropdown> */}
               <NodeDropdown fetch="http://localhost:4000/api/v1/data/nodes/name" buttonName = "PNodes" onSelect = {this.onNodeClick}></NodeDropdown>
@@ -91,9 +91,8 @@ class SanityCheckPage extends React.Component {
           </Navbar>
           {/* <Scatterplot data={{}}>Select PNode</Scatterplot> */}
           {this.state.apiRes != undefined &&
-            <GraphManager data = {this.state.apiRes[0]} currGraph = {this.state.page} scenario = {this.state.apiRes[1]} baseCase = {this.state.apiRes[2]}/>
+            <GraphManager data = {this.state.apiRes[0]} currGraph = {this.state.graph} scenario = {this.state.apiRes[1]} baseCase = {this.state.apiRes[2]}/>
           }
-          {/* <GraphManager data = {this.state.apiRes} currGraph = {this.state.page}/> */}
           {this.state.scenario}
           {this.state.base}
           {this.state.node}
