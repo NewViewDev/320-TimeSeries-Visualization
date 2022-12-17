@@ -196,15 +196,20 @@ async function nodeGroup(
   GROUPBY,
   LMP_RANGE
 ) {
-  let nodes = await dataLayer.post("/data/find/nodes", {
-    where: {
-      SCENARIO_ID: SCENARIO_ID,
-      PNODE_NAME: PNODE_NAME,
-      PERIOD_ID: {
-        gte: START_DATE,
-        lte: END_DATE,
-      },
+  let data_query = {
+    SCENARIO_ID: SCENARIO_ID,
+    PERIOD_ID: {
+      gte: START_DATE,
+      lte: END_DATE,
     },
+  };
+
+  if (PNODE_NAME) {
+    data_query["PNODE_NAME"] = PNODE_NAME;
+  }
+
+  let nodes = await dataLayer.post("/data/find/nodes", {
+    where: data_query,
     select: {
       PNODE_NAME: true,
       SCENARIO_ID: true,
@@ -231,18 +236,20 @@ async function nodeGroup(
   // }
 
   for (const group in groups) {
-    const values = groups[group].map((node) => node["LMP"]);
-    const std = math.std(values);
-    const mean = math.mean(values);
-    const median = math.median(values);
-    const stat = { std, mean, median };
+    let stat;
+    if (groups[group].length === 0) {
+      stat = { std: 0, mean: 0, median: 0 };
+    } else {
+      const values = groups[group].map((node) => node["LMP"]);
+      const std = math.std(values);
+      const mean = math.mean(values);
+      const median = math.median(values);
+      stat = { std, mean, median };
+    }
     // groups[group] = { stats: stat, nodes: groups[group] };
     groups[group] = { stats: stat };
   }
 
-  if (nodes.length == 0) {
-    throw new NotFoundError("No node with specified filters");
-  }
   const label = START_DATE.toISOString() + "-" + END_DATE.toISOString();
 
   return { interval: label, groups };

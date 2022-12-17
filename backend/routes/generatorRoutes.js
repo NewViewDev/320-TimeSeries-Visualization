@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 
-const dataController = require("../controllers/generatorController");
+const generatorController = require("../controllers/generatorController");
 
-router.route("/").get(dataController.getFields);
+router.route("/").get(generatorController.getGeneratorGroup);
+router.route("/fields").get(generatorController.getFieldNames);
 
 module.exports = router;
