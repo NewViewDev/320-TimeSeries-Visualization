@@ -205,7 +205,7 @@ class AnaylsisPage extends React.Component {
       <Container className="grid">
             <Container className="a">
 
-              <DateRangeSelector setRange={val => {this.setState({ranges: val})}} ranges={[this.state.selection]}></DateRangeSelector>
+              <DateRangeSelector setRange={val => {this.setState({ranges: val})}}></DateRangeSelector>
 
                 {/* The options the user can select from */}
                 <div>
