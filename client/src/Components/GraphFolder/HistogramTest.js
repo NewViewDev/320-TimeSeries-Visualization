@@ -23,19 +23,16 @@ function bin(min, max, numberOfBins, arr){ //this current implementation has max
         resultCountArray[whichBinNumber]++;
     }
 
-    console.log(resultCountArray);
     for(let i = 0; i < resultCountArray.length; i++){
         total += (resultCountArray[i]/arr.length * 100)
         resultCountArray[i] = {x: min + (.5 * binsize) + (binsize * i), y: resultCountArray[i]/arr.length * 100};
         
     }
-    console.log(total)
     return resultCountArray;
 }
   
 function whichBin(min, max, numberOfBins, number){//decides which bin
       let binsize = (1.0 * (max-min))/numberOfBins
-      // console.log(binsize)
       return Math.floor((number-min)/binsize)
 }
 

@@ -119,7 +119,6 @@ class GraphManager extends React.Component {
         this.setState({
             aggregate: aggregateType
         })
-        console.log(aggregateType)
     }
 
     aggregateButtonsList(){
@@ -135,14 +134,12 @@ class GraphManager extends React.Component {
         let key = this.props.currGraph
         switch (key) {
             case 1:
-                console.log(this.props.data)
                 return <>{this.aggregateButtonsList()}<ScatterLMP data = {manageData(this.props.data, this.props.baseCase, this.props.scenario, this.state.aggregate)} baseCase = {this.props.baseCase} scenario = {this.props.scenario}/></>   //The initial page, in Home.js
             case 2:
                 return <>{this.aggregateButtonsList()}<HistogramTest data = {manageData(this.props.data, this.props.baseCase, this.props.scenario, this.state.aggregate)} baseCase = {this.props.baseCase} scenario = {this.props.scenario}/></>   //The Sanity Check page, in SanityCheck.js
             case 3:
                 return <HeatmapMonthly data = {this.props.data} baseCase = {this.props.baseCase} scenario = {this.props.scenario}/>  //The Anaylsis page, in Anaylsis.js
             default:
-                console.log(this.props.data)
                 return <ScatterLMP data = {this.props.data}/>
         }
     }

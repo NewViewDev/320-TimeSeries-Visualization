@@ -24,7 +24,6 @@ import { visuallyHidden } from '@mui/utils';
 
 import {rows} from "../Components/StatTableManager"
 function convertToLocal(Period_ID){
-  console.log(Period_ID)
   let date = new Date(0);
   date.setUTCFullYear(Period_ID.substring(0,4));
   date.setUTCMonth(Period_ID.substring(5,7) - 1);
@@ -36,7 +35,6 @@ function convertToLocal(Period_ID){
   dateEnd.setUTCMonth(Period_ID.substring(30, 32) - 1);
   dateEnd.setUTCDate(Period_ID.substring(33,35));
   dateEnd.setUTCHours(Period_ID.substring(36,38));
-  console.log(date + " " + dateEnd)
   return date.toString() + " " + dateEnd.toString();
 
 }

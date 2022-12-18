@@ -37,7 +37,6 @@ class DropdownSearch extends React.Component {
     }
     close(event) {
         if(event.target.id !== this.state.id) {
-            // console.log(this.props.list)
             this.setState({open: false, search: ''});
         }
     }
@@ -59,7 +58,6 @@ class DropdownSearch extends React.Component {
                     
                     <div className={"options " + (this.state.open ? "open" : "")}>
                         {this.props.list.filter((option) => {
-                            // console.log(this.props.list)
                             return option.indexOf(this.state.search) === 0;
                         }).map((option, i) => {
                             return <div key={i} onClick={() => {

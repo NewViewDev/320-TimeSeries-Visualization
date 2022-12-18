@@ -32,17 +32,14 @@ class SanityCheckPage extends React.Component {
   }
 
   onScenarioClick(value) {
-    console.log(this.state)
     this.setState({scenario: value})
   }
 
   onBaseClick(value) {
-    console.log(this.state)
     this.setState({base: value})
   }
 
   onNodeClick(value) {
-    console.log(this.state)
     this.setState({node: value})
   }
 
@@ -52,17 +49,13 @@ class SanityCheckPage extends React.Component {
       let endDate = new Date(this.state.ranges.endDate.getTime());
       startDate.setTime(startDate.getTime() + (1 * 60 * 60 * 1000)) //done this way so daylight saving dosen't potentially mess up the time
       endDate.setDate(endDate.getDate() + 1)
-      console.log(startDate)
-      console.log(endDate)
       let toFetch = "http://localhost:4000/api/v1/data/nodes";
       toFetch += "?PNODE_NAME="+this.state.node+"&SCENARIO_ID_1="+this.state.scenario+"&SCENARIO_ID_2="+this.state.base+"&FIELD=LMP"+"&START_DATE="+startDate.toISOString().split(".")[0]+"&END_DATE="+endDate.toISOString().split(".")[0]
-      console.log(toFetch);
       let selectedScenario = this.state.scenario;
       let selectedBase = this.state.base;
       fetch(toFetch)
         .then(res => res.json()) //converts to json
         .then(res => {
-          console.log(res["data"]["nodes"]);
           this.setState({ 
               apiRes: [res["data"]["nodes"], selectedScenario, selectedBase]  
           })
