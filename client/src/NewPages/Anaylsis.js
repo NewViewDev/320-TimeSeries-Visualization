@@ -18,9 +18,7 @@ function genFetch2(ScenarioID, Interval, minuteOffset, StartDate, EndDate, Metri
   let endID = extractPeriod(EndDate)
   let toFetch = 'http://localhost:4000/api/v1/data/nodes/group'
   toFetch += '?SCENARIO_ID=' + ScenarioID; //1
-  // toFetch += '&START_DATE=2020-07-01T01:00:00'
   toFetch += '&START_DATE='+ startID
-  // toFetch += '&END_DATE=2020-12-03T01:00:00'
   toFetch += '&END_DATE='+endID
   toFetch += '&PNODE_NAME='+PnodeID//'.I.KENT    345 2'
   toFetch += '&FIELD=' + Metric
