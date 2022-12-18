@@ -130,7 +130,7 @@ exports.getGroup = async (req, res) => {
     DST,
   } = req.query;
 
-  if (!SCENARIO_ID || !START_DATE || !END_DATE) {
+  if (!SCENARIO_ID) {
     throw new BadRequestError("Please provide all values");
   }
 
@@ -138,38 +138,54 @@ exports.getGroup = async (req, res) => {
   END_DATE = DateTime.fromISO(END_DATE, { zone: "UTC+0" }).toJSDate();
   OFFSET = parseInt(OFFSET);
 
-  let start = new Date(START_DATE.getTime());
-  while (start < END_DATE) {
-    let interval;
-    if (INTERVAL === "daily") {
-      interval = 24;
-    } else if (INTERVAL === "monthly") {
-      var test = start.toISOString();
-      interval = 24 * getDays(start.getUTCFullYear(), start.getUTCMonth() + 1);
-    } else if (INTERVAL === "yearly") {
-      interval = 24 * daysInYear(start.getUTCFullYear());
+  let arr = [];
+
+  if (INTERVAL) {
+    let start = new Date(START_DATE.getTime());
+    while (start < END_DATE) {
+      let interval;
+      if (INTERVAL === "daily") {
+        interval = 24;
+      } else if (INTERVAL === "monthly") {
+        var test = start.toISOString();
+        interval =
+          24 * getDays(start.getUTCFullYear(), start.getUTCMonth() + 1);
+      } else if (INTERVAL === "yearly") {
+        interval = 24 * daysInYear(start.getUTCFullYear());
+      }
+
+      if (DST) {
+        interval += parseInt(DST);
+      }
+
+      promise.push(
+        nodeGroup(
+          PNODE_NAME,
+          SCENARIO_ID,
+          addHours(start, OFFSET),
+          addHours(start, interval + OFFSET - 1),
+          FIELD,
+          GROUPBY,
+          LMP_RANGE
+        )
+      );
+      start = addHours(start, interval);
     }
 
-    if (DST) {
-      interval += parseInt(DST);
-    }
-
-    promise.push(
-      nodeGroup(
+    arr = await Promise.all(promise);
+  } else {
+    arr = [
+      await nodeGroup(
         PNODE_NAME,
         SCENARIO_ID,
-        addHours(start, OFFSET),
-        addHours(start, interval + OFFSET - 1),
+        addHours(START_DATE, OFFSET),
+        addHours(END_DATE, OFFSET),
         FIELD,
         GROUPBY,
         LMP_RANGE
-      )
-    );
-    start = addHours(start, interval);
+      ),
+    ];
   }
-
-  arr = [];
-  arr = await Promise.all(promise);
 
   res.status(StatusCodes.OK).json({ length: arr.length, data: [...arr] });
 };
@@ -196,15 +212,20 @@ async function nodeGroup(
   GROUPBY,
   LMP_RANGE
 ) {
-  let nodes = await dataLayer.post("/data/find/nodes", {
-    where: {
-      SCENARIO_ID: SCENARIO_ID,
-      PNODE_NAME: PNODE_NAME,
-      PERIOD_ID: {
-        gte: START_DATE,
-        lte: END_DATE,
-      },
+  let data_query = {
+    SCENARIO_ID: SCENARIO_ID,
+    PERIOD_ID: {
+      gte: START_DATE,
+      lte: END_DATE,
     },
+  };
+
+  if (PNODE_NAME) {
+    data_query["PNODE_NAME"] = PNODE_NAME;
+  }
+
+  let nodes = await dataLayer.post("/data/find/nodes", {
+    where: data_query,
     select: {
       PNODE_NAME: true,
       SCENARIO_ID: true,
@@ -231,18 +252,20 @@ async function nodeGroup(
   // }
 
   for (const group in groups) {
-    const values = groups[group].map((node) => node["LMP"]);
-    const std = math.std(values);
-    const mean = math.mean(values);
-    const median = math.median(values);
-    const stat = { std, mean, median };
+    let stat;
+    if (groups[group].length === 0) {
+      stat = { std: 0, mean: 0, median: 0 };
+    } else {
+      const values = groups[group].map((node) => node["LMP"]);
+      const std = math.std(values);
+      const mean = math.mean(values);
+      const median = math.median(values);
+      stat = { std, mean, median };
+    }
     // groups[group] = { stats: stat, nodes: groups[group] };
     groups[group] = { stats: stat };
   }
 
-  if (nodes.length == 0) {
-    throw new NotFoundError("No node with specified filters");
-  }
   const label = START_DATE.toISOString() + "-" + END_DATE.toISOString();
 
   return { interval: label, groups };

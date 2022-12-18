@@ -41,6 +41,9 @@ function whichQuarter(date){
 
 function PeriodFinder(periodID, aggregateType){
     let periodDate = extractDate(periodID);
+    if(periodDate.getHours() == 0){//since we provided data starts day at 1:00 and ends at 24:00, if the date returns a 0, then that is equvalient, the period of of the previous day
+        periodDate.setDate(periodDate.getDate() - 1);
+    }
     if(aggregateType == 'Monthly') {
         periodDate.setDate(1);
         periodDate.setHours(0);
@@ -61,7 +64,6 @@ function PeriodFinder(periodID, aggregateType){
                 periodDate.setMonth(9)
                 break;
             default:
-                console.log('ahhh')
                 break;
         }
         periodDate.setDate(1);
@@ -79,9 +81,6 @@ function PeriodFinder(periodID, aggregateType){
 }
 
 function manageData(arr, scenario, baseCase, aggregate){
-    let min = Number.POSITIVE_INFINITY;
-    let max = Number.NEGATIVE_INFINITY;
-    let startTime = Date.now();
     let dataMap = new Map();
     for(let i = 0; i < arr.length; i++){
         let currNode = arr[i];
@@ -110,7 +109,7 @@ class GraphManager extends React.Component {
     constructor(props) {
         super(props) //this.props.currGraph, this.props.data, this.props.grouping type
         this.state = ({
-            aggregate: 'Hourly'
+            aggregate: 'Daily'
         })
         this.getPage = this.getPage.bind(this);
         this.onAggregateButtonClick = this.onAggregateButtonClick.bind(this);
@@ -125,10 +124,10 @@ class GraphManager extends React.Component {
 
     aggregateButtonsList(){
         return <div>
+            <Button onClick = {() => this.onAggregateButtonClick('Yearly')}>Yearly</Button>
+            <Button onClick = {() => this.onAggregateButtonClick('Quarterly')}>Quarterly</Button>
             <Button onClick = {() => this.onAggregateButtonClick('Monthly')}>Montly</Button>
             <Button onClick = {() => this.onAggregateButtonClick('Daily')}>Daily</Button>
-            <Button onClick = {() => this.onAggregateButtonClick('Quarterly')}>Quarterly</Button>
-            <Button onClick = {() => this.onAggregateButtonClick('Yearly')}>Yearly</Button>
             <Button onClick = {() => this.onAggregateButtonClick('Hourly')}>Hourly</Button>
         </div>
     }

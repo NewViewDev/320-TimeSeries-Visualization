@@ -1,5 +1,6 @@
 import React from "react"; 
 
+
 import AnalyticsTable from "../Components/AnalyticsTable";
 
 export const rows = [];
@@ -20,55 +21,12 @@ function genFetch2(ScenarioID, Interval, minuteOffset, StartDate, EndDate){
     toFetch += '&OFFSET=' + offset;
     return toFetch;
 }
+
 //Generates 1 row
 function genRow(timeperiod, mean, std, median, keyValue){
     return (
        {timeperiod, mean, median, std}
     )
-}
-
-//a day starts at 1:00, not 0:00
-function startTime(date) {
-
-}
-
-//24:00 is considered part of the day
-function endTime3(date){
-
-}
-//Extracts the date from the Period_ID format into a JS date object
-function extractDate(Period_ID){
-    let date = new Date(0);
-    // 2020-01-01T00:00:00.000Z format
-    // console.log(Period_ID)
-    // console.log(Period_ID.substring(0,4));
-    // console.log(Period_ID.substring(5,7));
-    // console.log(Period_ID.substring(8,10));
-    // console.log(Period_ID.substring(11,13));
-    date.setUTCFullYear(Period_ID.substring(0,4));
-    date.setUTCMonth(Period_ID.substring(5,7) - 1);
-    date.setUTCDate(Period_ID.substring(8,10));
-    date.setUTCHours(Period_ID.substring(11,13));
-    // console.log(date);
-    return date;
-}
-
-function extractPeriod(date){
-    let period_ID = '';
-    period_ID += date.getFullYear() + '-'
-    period_ID += String(date.getMonth() + 1).padStart(2, '0') + '-'
-    period_ID += String(date.getDate()).padStart(2, '0') + 'T'
-    period_ID += String(date.getHours()).padStart(2, '0') + ':00:00'
-    return period_ID;
-}
-
-//Finds the mean for an array 
-function mean(arr, field){
-    let sum = 0;
-    for(let i = 0; i < arr.length; i++){
-        sum += arr[i][field];
-    }
-    return (sum/arr.length).toFixed(2)
 }
 
 class StatTableManager extends React.Component {
@@ -78,71 +36,6 @@ class StatTableManager extends React.Component {
         this.state = {
         }
         this.genTable = this.genTable.bind(this);
-        this.handleAll = this.handleAll.bind(this);
-        this.handleDaily = this.handleDaily.bind(this);
-    }
-
-    componentDidMount(){
-        // this.allTesting();
-        if(this.props.data != undefined){
-            this.handleAll();
-        }
-    }
-
-    //Handles the ALL case
-    handleAll(){
-        if(this.props.data != undefined && this.props.data.length > 0){
-            let arr = [];
-            let totalMean = mean(this.props.data, this.props.metric)
-            arr.push(
-                {dateName: 'All', mean: totalMean, std: totalMean, median: totalMean}
-            )
-            return arr;
-        }
-        return undefined;
-    }
-
-    async handleDaily(){ //needs to check to make sure it actually handles daylight saving properly
-        // /api/v1/data/nodes/group?SCENARIO_ID=1&START_DATE=2020-07-01T01:00:00&END_DATE=2020-12-03T01:00:00&FIELD=LMP&INTERVAL=daily&OFFSET=0
-        let startDate = new Date(2020, 1, 1, 1);
-        let endDate = new Date(2020, 10, 5, 0);
-
-        let startInterval = new Date(startDate.getTime())
-        
-        let currEndInterval = new Date(startDate.getTime())
-        let nextInterval = new Date(startDate.getTime())
-        nextInterval.setDate(nextInterval.getDate() + 1)
-        let offset = startDate.getTimezoneOffset();
-
-        let currArray = [];
-        while(currEndInterval < endDate){//I think < not <= so that endDate is exclusive
-            //if the time between the currEndInteveral and nextInterval is daylight savings
-            if(nextInterval.getTimezoneOffset() != offset){
-                console.log(startInterval.toUTCString() + ' ' + currEndInterval.toUTCString())
-                //make an iff to make sure that start and curr interval are not the same currently
-                if(startInterval.getTime() != currEndInterval.getTime()){
-                    console.log(genFetch2(1, 'daily', offset, startInterval, currEndInterval));
-                    let toFetch = genFetch2(1, 'daily', offset, startInterval, currEndInterval);
-                    let response =  await fetch(toFetch).then(res => res.json()) 
-                    currArray = currArray.concat(response['data'])
-                }
-                offset = nextInterval.getTimezoneOffset();
-
-                startInterval = new Date(nextInterval.getTime());
-            }
-            currEndInterval.setDate(currEndInterval.getDate() + 1)
-            nextInterval.setDate(nextInterval.getDate() + 1)
-        }
-            console.log(startInterval + ' ' + currEndInterval)
-            console.log(genFetch2(1, 'daily', offset, startInterval, currEndInterval));
-        if(nextInterval.getTimezoneOffset() != offset){
-            console.log(currEndInterval + ' ' + nextInterval)
-            offset = nextInterval.getTimezoneOffset();
-        }
-        let toFetch = genFetch2(1, 'daily', offset, startInterval, currEndInterval);
-        let response =  await fetch(toFetch).then(res => res.json()) 
-        currArray = currArray.concat(response['data'])
-        console.log(currArray)
     }
 
     genTable(){
