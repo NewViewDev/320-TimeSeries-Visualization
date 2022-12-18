@@ -12,9 +12,7 @@ class DatabaseDropdown extends React.Component {
         fetch(this.props.fetch)
         .then(res => res.json())
         .then(res => {
-            // console.log(res)
             let dataArray = res['data']['scenarios'];
-            console.log(dataArray.map(value=>value['SCENARIO_ID']))
             this.setState({list: dataArray.map(value=>value['SCENARIO_ID'])});
         })
     }

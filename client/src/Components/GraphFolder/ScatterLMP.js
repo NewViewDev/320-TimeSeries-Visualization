@@ -87,9 +87,6 @@ class ScatterLMP extends React.Component{
     }
 
     generateSeries(){ //generates the series with the data, the reason a function is that the series needs to be regenerated whenever updated because it recieves new data when updated
-        // let dataArr = manageData(this.props.data);
-        // console.log(this.props.scenario);
-        console.log(this.props);
         let dataArr = manageData2(this.props.data, this.props.scenario, this.props.baseCase)[0];
         return [{
             name: "Base Case vs Scatter",

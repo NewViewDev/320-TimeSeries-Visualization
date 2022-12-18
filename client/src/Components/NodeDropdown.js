@@ -12,7 +12,6 @@ class NodeDropdown extends React.Component {
         fetch(this.props.fetch)
         .then(res => res.json())
         .then(res => {
-            // console.log(res)
             let dataArray = res['data']['nodes'];
             this.setState({list: dataArray});
         })

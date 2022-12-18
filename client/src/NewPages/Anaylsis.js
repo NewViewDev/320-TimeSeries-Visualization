@@ -104,7 +104,6 @@ class AnaylsisPage extends React.Component {
   }
 
   async handleDaily(scenario, metric, pnodeID, grouping){
-    console.log(this.state.ranges)
     let startDate = new Date(this.state.ranges['startDate'].getTime())
     let endDate = new Date(this.state.ranges['endDate'].getTime())
     endDate.setDate(endDate.getDate() + 1)
@@ -155,7 +154,6 @@ class AnaylsisPage extends React.Component {
     } else {
       toFetch = genFetch(scenario, 'daily', offset, startInterval, currEndInterval, metric, grouping);
     }
-    console.log(toFetch);
     let response =  await fetch(toFetch).then(res => res.json()) 
     if(response['data'] != undefined)
       currArray = currArray.concat(response['data'])
@@ -199,7 +197,6 @@ class AnaylsisPage extends React.Component {
               } else {
                 toFetch = genFetch(scenario, 'monthly', offset, startInterval, currEndInterval, metric, grouping);
               }
-              console.log(toFetch)
               response =  await fetch(toFetch).then(res => res.json()) 
               if(response['data'] != undefined)
                 currArray = currArray.concat(response['data'])
@@ -209,7 +206,6 @@ class AnaylsisPage extends React.Component {
             } else {
               toFetch = genFetch(scenario, 'monthly', offset, currEndInterval, nextInterval, metric, grouping, nextInterval.getTimezoneOffset() - currEndInterval.getTimezoneOffset());
             }
-            console.log(toFetch)
             response =  await fetch(toFetch).then(res => res.json()) 
             if(response['data'] != undefined)
               currArray.push(response['data'][0])
@@ -225,12 +221,10 @@ class AnaylsisPage extends React.Component {
     } else {
       toFetch = genFetch(scenario, 'monthly', offset, startInterval, currEndInterval, metric, grouping);
     }
-    console.log(toFetch)
     let response =  await fetch(toFetch).then(res => res.json()) 
     if(response['data'] != undefined)
       currArray = currArray.concat(response['data'])
     // if(nextInterval.getTimezoneOffset() != offset){ //do we need this part
-    //     console.log('hi');
     //     toFetch = genFetch2(scenario, 'monthly', offset, currEndInterval, nextInterval, metric, pnodeID, nextInterval.getTimezoneOffset() - currEndInterval.getTimezoneOffset());
     //     response =  await fetch(toFetch).then(res => res.json()) 
     //     if(response['data'] != undefined)
@@ -259,7 +253,6 @@ class AnaylsisPage extends React.Component {
       } else {
         toFetch = genFetch(scenario, 'yearly', offset, startDate, endDate, metric, grouping);
       }
-      console.log(toFetch)
       let response =  await fetch(toFetch).then(res => res.json()) 
       if(response['data'] != undefined)
         currArray = currArray.concat(response['data'])
@@ -285,7 +278,6 @@ class AnaylsisPage extends React.Component {
       } else {
         toFetch = genFetch(scenario, 'all', offset, startDate, endDate, metric, grouping, endDate.getTimezoneOffset() - startDate.getTimezoneOffset());
       }
-      console.log(toFetch)
       let response =  await fetch(toFetch).then(res => res.json()) 
       if(response['data'] != undefined)
         currArray = currArray.concat(response['data'])
@@ -323,7 +315,7 @@ class AnaylsisPage extends React.Component {
       let currScenario = this.state.scenario
       let currPnode = this.state.node
       let currGrouping = this.state.group
-      if(this.state.node != undefined){
+      if(this.state.node != undefined){ //if stats for a single pnode
         if(currTimePeriod == 'Daily'){
           this.handleDaily(currScenario, currMetric, currPnode);
         } else if(currTimePeriod == 'Yearly') {
@@ -333,7 +325,7 @@ class AnaylsisPage extends React.Component {
         } else {
           this.handleAll(currScenario, currMetric, currPnode);
         }
-      } else {
+      } else { //if stats for according to the generator groupings
         if(currTimePeriod == 'Daily'){
           this.handleDaily(currScenario, currMetric, undefined, currGrouping);
         } else if(currTimePeriod == 'Yearly') {
