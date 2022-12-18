@@ -23,9 +23,23 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 
 import {rows} from "../Components/StatTableManager"
-//const rows = [];
+function convertToLocal(Period_ID){
+  console.log(Period_ID)
+  let date = new Date(0);
+  date.setUTCFullYear(Period_ID.substring(0,4));
+  date.setUTCMonth(Period_ID.substring(5,7) - 1);
+  date.setUTCDate(Period_ID.substring(8,10));
+  date.setUTCHours(Period_ID.substring(11,13));
+  //2020-03-01T06:00:00.000Z-2020-11-01T05:00:00.000Z
+  let dateEnd = new Date(0);
+  dateEnd.setUTCFullYear(Period_ID.substring(25,29));
+  dateEnd.setUTCMonth(Period_ID.substring(30, 32) - 1);
+  dateEnd.setUTCDate(Period_ID.substring(33,35));
+  dateEnd.setUTCHours(Period_ID.substring(36,38));
+  console.log(date + " " + dateEnd)
+  return date.toString() + " " + dateEnd.toString();
 
-// function
+}
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -283,6 +297,8 @@ export default function EnhancedTable() {
                 .map((row, index) => {
                   const isItemSelected = isSelected(row.name);
                   const labelId = `enhanced-table-checkbox-${index}`;
+                  let localRep = convertToLocal(row.timeperiod)
+
                   return (
                     <TableRow
                       hover
@@ -308,7 +324,7 @@ export default function EnhancedTable() {
                         scope="row"
                         padding="none"
                       >
-                        {row.timeperiod}
+                        {localRep}
                       </TableCell>
                       <TableCell align="right">{row.mean}</TableCell>
                       <TableCell align="right">{row.median}</TableCell>

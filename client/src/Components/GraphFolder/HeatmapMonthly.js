@@ -1,6 +1,15 @@
 import React from "react";
 import Chart from "react-apexcharts"
 
+function extractDate(Period_ID){
+    let date = new Date(0);
+    date.setUTCFullYear(Period_ID.substring(0,4));
+    date.setUTCMonth(Period_ID.substring(5,7) - 1);
+    date.setUTCDate(Period_ID.substring(8,10));
+    date.setUTCHours(Period_ID.substring(11,13));
+    return date;
+}
+
 //First 2 functions are used to construct the initial heat map data, the data is a 24 series representing the 24 hours in the day and each series has 12 entries representing the 12 months
 function filledArray(size){//creates a array representing the 12 months 
     let arr = new Array(size);
@@ -21,7 +30,6 @@ function manageData(arr, baseCase, scenario){//takes the data recieved from the 
     //First we have connect the data from base and scenario since scatter plot is comparing lmp between the base and scenario
 
     let mapeArr = new Array(24);
-    console.log(arr);
     for(let i = 0; i < mapeArr.length; i++){ //construct the 24 series with 12 months each
         mapeArr[i] = (constructSeries(i));
     }
@@ -53,7 +61,6 @@ function manageData(arr, baseCase, scenario){//takes the data recieved from the 
     
     let keyIterator = dataMap.keys();
     let key = keyIterator.next();
-
     //iterates through the map, using the period information to mapeArr to accumulate Percent error and increment the count
     while(!key.done) {
         let value = key.value
@@ -61,11 +68,11 @@ function manageData(arr, baseCase, scenario){//takes the data recieved from the 
         let dataBase = data[1];
         let dataScen = data[0];
         let MAPE = Math.abs((dataBase - dataScen)/dataScen);
-        let currDate = new Date(value);
+        let currDate = extractDate(value)
         
-        let hour = currDate.getHours();
-        let month = currDate.getMonth();
-        if(hour == 0) {
+        let hour = currDate.getHours();//we get the hour value
+        let month = currDate.getMonth();//we get the month value
+        if(hour == 0) {//changes those values slightly since we start on 1:00 and end on 24:00 for a day
             if(currDate.getDate() == 1){
                 month -= 1;
                 if(month == -1){
@@ -73,12 +80,10 @@ function manageData(arr, baseCase, scenario){//takes the data recieved from the 
                 }
             }
             hour = 24;
-
         }
-        // console.log(month);
         if(dataBase == Infinity || dataScen == Infinity){
-            console.log(value);
-        } else {
+            //if either value are infinity (when we selected the same basecase and scenario, we do nothing)
+        } else {//otherwise accumulate the numerator of Percent error and increment the count(the denominator of Percent error)
             mapeArr[hour - 1].data[month][1]++;
             mapeArr[hour - 1].data[month][0] = mapeArr[hour - 1].data[month][0] + MAPE;
         }
@@ -96,7 +101,6 @@ function manageData(arr, baseCase, scenario){//takes the data recieved from the 
             }
         }
     }
-    console.log(mapeArr);
     return mapeArr;
 }
 
