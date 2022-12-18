@@ -74,11 +74,15 @@ exports.getGeneratorGroup = async (req, res) => {
 
     arr = await Promise.all(promise);
   } else {
+    let endOffSet = OFFSET;
+    if(DST){
+      endOffSet += parseInt(DST)
+    }
     arr = [
       await getFields(
         SCENARIO_ID,
         addHours(START_DATE, OFFSET),
-        addHours(END_DATE, OFFSET),
+        addHours(END_DATE, endOffSet),
         FIELD,
         GROUPBY,
         LMP_RANGE

@@ -79,13 +79,11 @@ class AnaylsisPage extends React.Component {
     this.setState({node: value})
   }
 
-  async handleDaily(scenario, metric, pnodeID){ //needs to check to make sure it actually handles daylight saving properly
+  async handleDaily(scenario, metric, pnodeID){
     console.log(this.state.ranges)
     let startDate = new Date(this.state.ranges['startDate'].getTime())
     let endDate = new Date(this.state.ranges['endDate'].getTime())
     endDate.setDate(endDate.getDate() + 1)
-    // let startDate = new Date(2020, 1, 1, 0);
-    // let endDate = new Date(2020, 9, 5, 0);
 
     let startInterval = new Date(startDate.getTime()) //The start of the span of time
     
@@ -97,8 +95,7 @@ class AnaylsisPage extends React.Component {
     let currArray = [];
     while(currEndInterval < endDate){
         //if the time between the currEndInteveral and nextInterval is daylight savings
-        if(nextInterval.getTimezoneOffset() != offset){//if the nextInterval has a different offset
-            //make an iff to make sure that start and curr interval are not the same currently
+        if(nextInterval.getTimezoneOffset() != offset){//nextInterval will has a different offset
             if(startInterval.getTime() != currEndInterval.getTime()){//startInterval to currEndInterval is one interval of time in which daylight savings does not change
                 let toFetch = genFetch2(scenario, 'daily', offset, startInterval, currEndInterval, metric, pnodeID);
                 console.log(toFetch)
@@ -112,18 +109,19 @@ class AnaylsisPage extends React.Component {
             if(response2['data'] != undefined)
               currArray.push(response2['data'][0])
             offset = nextInterval.getTimezoneOffset();
-            startInterval = new Date(nextInterval.getTime());//we start at the 
+            startInterval = new Date(nextInterval.getTime());//we start at the nextInterval for our start
         }
         //The currEndInterval and nextInterval move to the next day
         currEndInterval.setDate(currEndInterval.getDate() + 1)
         nextInterval.setDate(nextInterval.getDate() + 1)
     }
 
+    //startInterval to currEndInterval is one interval of time in which daylight savings does not change
     let toFetch = genFetch2(scenario, 'daily', offset, startInterval, currEndInterval, metric, pnodeID);
     let response =  await fetch(toFetch).then(res => res.json()) 
     if(response['data'] != undefined)
       currArray = currArray.concat(response['data'])
-    if(nextInterval.getTimezoneOffset() != offset){//
+    if(nextInterval.getTimezoneOffset() != offset){//if the last date was daylight savings currEndInterval to nextInterval is the day in which daylight saving changes
       let toFetchDstChange = genFetch2(scenario, 'daily', offset, currEndInterval, nextInterval, metric, pnodeID, nextInterval.getTimezoneOffset() - currEndInterval.getTimezoneOffset());
       let response2 =  await fetch(toFetchDstChange).then(res => res.json()) 
       if(response2['data'] != undefined)
@@ -135,7 +133,7 @@ class AnaylsisPage extends React.Component {
     })
   }
 
-  async handleMonthly(scenario, metric, pnodeID){ //needs to check to make sure it actually handles daylight saving properly
+  async handleMonthly(scenario, metric, pnodeID){ 
     let startDate = new Date(this.state.ranges['startDate'].getTime());
     startDate.setDate(1);
     let endDate = new Date(this.state.ranges['endDate'].getTime());
@@ -150,7 +148,7 @@ class AnaylsisPage extends React.Component {
     let offset = startDate.getTimezoneOffset();
 
     let currArray = [];
-    while(currEndInterval < endDate){//I think < not <= so that endDate is exclusive
+    while(currEndInterval < endDate){
         //if the time between the currEndInteveral and nextInterval is daylight savings
         if(nextInterval.getTimezoneOffset() != offset){
             //make an iff to make sure that start and curr interval are not the same currently
@@ -200,7 +198,7 @@ class AnaylsisPage extends React.Component {
     let offset = startDate.getTimezoneOffset();
 
     let currArray = [];
-    if(startDate < endDate){//I think < not <= so that endDate is exclusive
+    if(startDate < endDate){
       let toFetch = genFetch2(scenario, 'yearly', offset, startDate, endDate, 'LMP', pnodeID);
       console.log(toFetch)
       let response =  await fetch(toFetch).then(res => res.json()) 
@@ -220,8 +218,9 @@ class AnaylsisPage extends React.Component {
     let offset = startDate.getTimezoneOffset();
 
     let currArray = [];
-    if(startDate < endDate){//I think < not <= so that endDate is exclusive
+    if(startDate < endDate){
       let toFetch = genFetch2(scenario, 'all', offset, startDate, endDate, 'LMP', pnodeID, endDate.getTimezoneOffset() - startDate.getTimezoneOffset());
+      console.log(toFetch)
       let response =  await fetch(toFetch).then(res => res.json()) 
       if(response['data'] != undefined)
         currArray = currArray.concat(response['data'])
@@ -232,15 +231,12 @@ class AnaylsisPage extends React.Component {
       selectedMetric: metric
     })
   }
-
-
-  //Move button into the statTableManager to make things easier
   //When the user presses submit, the client fetches the releavant info from the server
   onGenerateSubmit(){
     //Fetches the the data for the selected options
     if(this.state.scenario != undefined && this.state.metric != undefined && this.state.timePeriod != undefined && this.state.node != undefined){
-      // let toFetch = genFetch(this.state.scenario, this.state.metric, this.state.node, this.state.ranges.startDate, this.state.ranges.endDate);
-      let currMetric = this.state.metric //These options are stored rather than direct passing something like this.state.metric so that nothing changes unless the user presses submit
+      //These options are stored rather than direct passing this.state.metric so that nothing changes unless the user presses submit
+      let currMetric = this.state.metric
       let currTimePeriod = this.state.timePeriod
       let currScenario = this.state.scenario
       let currPnode = this.state.node

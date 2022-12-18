@@ -12,19 +12,17 @@ function mean(arr){
     return (sum/arr.length)
 }
 
-
 function manageData2(arr, scenario, baseCase){//takes the data recieved from the server and makes it into a form usuable by graphs
     let min = Number.POSITIVE_INFINITY;
     let max = Number.NEGATIVE_INFINITY;
     let data = [];
     let dataIterator = arr.values();
-    // let dataIterator = dataMap.values();
     let dataEntry = dataIterator.next();
     while(!dataEntry.done) {
         if(dataEntry.value[0].length != 0 && dataEntry.value[1].length != 0){
             let scenarioLMP = mean(dataEntry.value[0]);
             let baseLMP = mean(dataEntry.value[1]);
-            data.push([scenarioLMP, baseLMP]);
+            data.push([scenarioLMP, baseLMP]); 
             if(baseLMP <= min){
                 min = baseLMP;
               }
@@ -101,7 +99,6 @@ class ScatterLMP extends React.Component{
 
 
     generateOptions(){ //generates the series with the data, the reason a function is that the series needs to be regenerated whenever updated because it recieves new data when updated if we want to specificy a new min or max diffent from the default
-        // let dataArr = manageData(this.props.data);
         let min = manageData2(this.props.data, this.props.scenario, this.props.baseCase)[1]
         let max = manageData2(this.props.data, this.props.scenario, this.props.baseCase)[2]
         return {//essentially default options for charts in Apex charts

@@ -42,25 +42,7 @@ function whichBin(min, max, numberOfBins, number){//decides which bin
 function manageData(arr, scenario, baseCase){
     let min = Number.POSITIVE_INFINITY;
     let max = Number.NEGATIVE_INFINITY;
-    // let dataMap = new Map();
-    // for(let i = 0; i < arr.length; i++){
-    //     let currNode = arr[i];
-    //     let scenarioID = currNode["SCENARIO_ID"];
-    //     let periodID = currNode["PERIOD_ID"];
-    //     let value = currNode["LMP"];
-    //     let aggregatedPeriod = PeriodFinder(periodID, 'month');
-    //     if (dataMap.get(aggregatedPeriod) === undefined) {
-    //         let arr = [[],[]]
-    //         dataMap.set(aggregatedPeriod, arr)
-    //     }
-    //     let entry = dataMap.get(aggregatedPeriod)
-    //     if(scenarioID == scenario){
-    //         entry[0].push(value) //entry[0] stores the scenario
-    //     }
-    //     if(scenarioID == baseCase){
-    //         entry[1].push(value) //entry[1] stores the basecase
-    //     }
-    // }
+
     let data = [[], []];
     let dataIterator = arr.values();
     let dataEntry = dataIterator.next();
@@ -87,47 +69,6 @@ function manageData(arr, scenario, baseCase){
         }
         dataEntry = dataIterator.next();
     }
-    max = Math.ceil(max + .0001)
-    min = Math.floor(min);
-    return [data, min, max];
-}
-
-//takes in the result from the endpoints and converts it into something usuable because currently the basecase and scenario node info are not split up, it also returns the min and max values used for the histogram
-function manageData2(arr){
-    let min = Number.POSITIVE_INFINITY;
-    let max = Number.NEGATIVE_INFINITY;
-    let dataMap = new Map();//stores a map that maps scenarioID -> List of LMPs
-    for(let i = 0; i < arr.length; i++){//goes through the arr passed by the endpoint and splits the data in half
-        let currNode = arr[i];
-        let scenarioID = currNode["SCENARIO_ID"];
-        let value = currNode["LMP"];
-        if (dataMap.get(scenarioID) === undefined) {
-            let arr = [value]
-            dataMap.set(scenarioID, arr)
-        } else {            
-            dataMap.get(scenarioID).push(value)
-            
-        }
-        if(value <= min){
-            min = value;
-        }
-        if(value >= max){
-            max = value;
-        }
-    }
-    
-    //We iterate through the list of LMPs and put the results in an array called data, so data[0] has the list of LMPs for one and data[1] has the list of LMPs for the other
-    let data = [];
-    let dataIterator = dataMap.values();
-    let dataEntry = dataIterator.next();
-    while(!dataEntry.done) {
-        if(dataEntry.value.length == 1){ //comparing to same case
-            dataEntry.value.push(dataEntry.value[0]);
-        }
-        data.push(dataEntry.value)
-        dataEntry = dataIterator.next();
-    }
-    //since the current implmentation of bin has max exclusive, the max is increased by a bit, both max and min are ceiled and floored respectively so that they are whole numbers(this isn't needed, but makes the graph look nicer typically)
     max = Math.ceil(max + .0001)
     min = Math.floor(min);
     return [data, min, max];
