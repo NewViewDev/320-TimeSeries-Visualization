@@ -31,6 +31,26 @@ function genFetch2(ScenarioID, Interval, minuteOffset, StartDate, EndDate, Metri
   return toFetch;
 }
 
+function genFetch(ScenarioID, Interval, minuteOffset, StartDate, EndDate, Metric, GroupBy, DST = 0){
+  let offset = minuteOffset/60
+  DST = DST/60
+  let startID = extractPeriod(StartDate, true)
+  let endID = extractPeriod(EndDate)
+  let toFetch = 'http://localhost:4000/api/v1/data/generators'
+  toFetch += '?SCENARIO_ID=' + ScenarioID; //1
+  // toFetch += '&START_DATE=2020-07-01T01:00:00'
+  toFetch += '&START_DATE='+ startID
+  // toFetch += '&END_DATE=2020-12-03T01:00:00'
+  toFetch += '&END_DATE='+endID
+  toFetch += '&FIELD='+ GroupBy//'.I.KENT    345 2'
+  // toFetch += '&FIELD=' + Metric
+  if(Interval != 'all')
+    toFetch += '&INTERVAL=' + Interval
+  toFetch += '&OFFSET=' + offset;
+  toFetch += '&DST=' + DST;
+  return toFetch;
+}
+
 function extractPeriod(date, isStart = false){
   let period_ID = '';
   period_ID += date.getFullYear() + '-'
@@ -54,6 +74,7 @@ class AnaylsisPage extends React.Component {
     this.onMetricClick = this.onMetricClick.bind(this);
     this.onTimePeriodClick = this.onTimePeriodClick.bind(this);
     this.onNodeClick = this.onNodeClick.bind(this);
+    this.onGroupClick = this.onGroupClick.bind(this);
     this.onGenerateSubmit = this.onGenerateSubmit.bind(this);
     this.handleDaily = this.handleDaily.bind(this);
     this.handleMonthly = this.handleMonthly.bind(this);
@@ -80,8 +101,11 @@ class AnaylsisPage extends React.Component {
   onNodeClick(value){
     this.setState({node: value})
   }
+  onGroupClick(value){
+    this.setState({group: value})
+  }
 
-  async handleDaily(scenario, metric, pnodeID){
+  async handleDaily(scenario, metric, pnodeID, grouping){
     console.log(this.state.ranges)
     let startDate = new Date(this.state.ranges['startDate'].getTime())
     let endDate = new Date(this.state.ranges['endDate'].getTime())
@@ -99,11 +123,12 @@ class AnaylsisPage extends React.Component {
         //if the time between the currEndInteveral and nextInterval is daylight savings
         if(nextInterval.getTimezoneOffset() != offset){//nextInterval will has a different offset
             if(startInterval.getTime() != currEndInterval.getTime()){//startInterval to currEndInterval is one interval of time in which daylight savings does not change
-                let toFetch = genFetch2(scenario, 'daily', offset, startInterval, currEndInterval, metric, pnodeID);
-                console.log(toFetch)
-                let response =  await fetch(toFetch).then(res => res.json()) 
-                if(response['data'] != undefined)
-                  currArray = currArray.concat(response['data'])
+
+              let toFetch = genFetch2(scenario, 'daily', offset, startInterval, currEndInterval, metric, pnodeID);
+              console.log(toFetch)
+              let response =  await fetch(toFetch).then(res => res.json()) 
+              if(response['data'] != undefined)
+                currArray = currArray.concat(response['data'])
             }
             //while currEndInterval to nextInterval is the day in which daylight saving changes
             let toFetchDstChange = genFetch2(scenario, 'daily', offset, currEndInterval, nextInterval, metric, pnodeID, nextInterval.getTimezoneOffset() - currEndInterval.getTimezoneOffset());
@@ -131,11 +156,12 @@ class AnaylsisPage extends React.Component {
     }
     this.setState({
       apiRes: currArray,
-      metric: metric
+      selectedMetric: metric,
+      selectedNode: pnodeID
     })
   }
 
-  async handleMonthly(scenario, metric, pnodeID){ 
+  async handleMonthly(scenario, metric, pnodeID, grouping){ 
     let startDate = new Date(this.state.ranges['startDate'].getTime());
     startDate.setDate(1);
     let endDate = new Date(this.state.ranges['endDate'].getTime());
@@ -155,11 +181,11 @@ class AnaylsisPage extends React.Component {
         if(nextInterval.getTimezoneOffset() != offset){
             //make an iff to make sure that start and curr interval are not the same currently
             if(startInterval.getTime() != currEndInterval.getTime()){
-                console.log(genFetch2(scenario, 'monthly', offset, startInterval, currEndInterval, metric, pnodeID));
-                let toFetch = genFetch2(scenario, 'monthly', offset, startInterval, currEndInterval, metric, pnodeID);
-                let response =  await fetch(toFetch).then(res => res.json()) 
-                if(response['data'] != undefined)
-                  currArray = currArray.concat(response['data'])
+              console.log(genFetch2(scenario, 'monthly', offset, startInterval, currEndInterval, metric, pnodeID));
+              let toFetch = genFetch2(scenario, 'monthly', offset, startInterval, currEndInterval, metric, pnodeID);
+              let response =  await fetch(toFetch).then(res => res.json()) 
+              if(response['data'] != undefined)
+                currArray = currArray.concat(response['data'])
             }
             let toFetchDstChange = genFetch2(scenario, 'monthly', offset, currEndInterval, nextInterval, metric, pnodeID, nextInterval.getTimezoneOffset() - currEndInterval.getTimezoneOffset());
             console.log(toFetchDstChange)
@@ -188,11 +214,12 @@ class AnaylsisPage extends React.Component {
 
     this.setState({
       apiRes: currArray,
-      selectedMetric: metric
+      selectedMetric: metric,
+      selectedNode: pnodeID
     })
   }
 
-  async handleYearly(scenario, metric, pnodeID){ //needs to check to make sure it actually handles daylight saving properly
+  async handleYearly(scenario, metric, pnodeID, grouping){ //needs to check to make sure it actually handles daylight saving properly
     let startDate = new Date(this.state.ranges['startDate'].getTime());
     startDate.setFullYear(startDate.getFullYear(), 0, 1);
     let endDate = new Date(this.state.ranges['endDate'].getTime());
@@ -210,18 +237,24 @@ class AnaylsisPage extends React.Component {
 
     this.setState({
       apiRes: currArray,
-      selectedMetric: metric
+      selectedMetric: metric,
+      selectedNode: pnodeID
     })
   }
 
-  async handleAll(scenario, metric, pnodeID){
+  async handleAll(scenario, metric, pnodeID, grouping){
     let startDate = new Date(this.state.ranges['startDate'].getTime())
     let endDate = new Date(this.state.ranges['endDate'].getTime())
     let offset = startDate.getTimezoneOffset();
 
     let currArray = [];
     if(startDate < endDate){
-      let toFetch = genFetch2(scenario, 'all', offset, startDate, endDate, 'LMP', pnodeID, endDate.getTimezoneOffset() - startDate.getTimezoneOffset());
+      let toFetch;
+      if(pnodeID != undefined){
+        toFetch = genFetch2(scenario, 'all', offset, startDate, endDate, 'LMP', pnodeID, endDate.getTimezoneOffset() - startDate.getTimezoneOffset());
+      } else {
+        toFetch = genFetch(scenario, 'all', offset, startDate, endDate, 'LMP', grouping, endDate.getTimezoneOffset() - startDate.getTimezoneOffset());
+      }
       console.log(toFetch)
       let response =  await fetch(toFetch).then(res => res.json()) 
       if(response['data'] != undefined)
@@ -230,7 +263,8 @@ class AnaylsisPage extends React.Component {
 
     this.setState({
       apiRes: currArray,
-      selectedMetric: metric
+      selectedMetric: metric,
+      selectedNode: pnodeID
     })
   }
   //When the user presses submit, the client fetches the releavant info from the server
@@ -250,6 +284,27 @@ class AnaylsisPage extends React.Component {
         this.handleMonthly(currScenario, currMetric, currPnode);
       } else {
         this.handleAll(currScenario, currMetric, currPnode);
+      }
+    }
+    if(this.state.scenario != undefined && this.state.metric != undefined && this.state.timePeriod != undefined && (this.state.node != undefined || this.state.group != undefined)){
+      //These options are stored rather than direct passing this.state.metric so that nothing changes unless the user presses submit
+      let currMetric = this.state.metric
+      let currTimePeriod = this.state.timePeriod
+      let currScenario = this.state.scenario
+      let currPnode = this.state.node
+      let currGrouping = this.state.group
+      if(this.state.node != undefined){
+        if(currTimePeriod == 'Daily'){
+          this.handleDaily(currScenario, currMetric, currPnode);
+        } else if(currTimePeriod == 'Yearly') {
+          this.handleYearly(currScenario, currMetric, currPnode);
+        } else if(currTimePeriod == 'Monthly') {
+          this.handleMonthly(currScenario, currMetric, currPnode);
+        } else {
+          this.handleAll(currScenario, currMetric, currPnode);
+        }
+      } else {
+        this.handleAll(currScenario, currMetric, undefined, currGrouping)
       }
     }
   }
@@ -276,7 +331,7 @@ class AnaylsisPage extends React.Component {
                   <NodeDropdown fetch="http://localhost:4000/api/v1/data/nodes/name" buttonName = "PNodes" onSelect = {this.onNodeClick}></NodeDropdown>
                   <br/>
 
-                  <Dropdown list ={["Type", "Load Zone","Dispatch Zone","Reserve Zone","Fuel Type"]}>Select Grouping</Dropdown>
+                  <Dropdown list ={["TYPE", "LOAD_ZONE","DISPATCH_ZONE","RESERVE_ZONE","FUEL"]} onSelect = {this.onGroupClick}>Select Grouping</Dropdown>
                   <br/>
                 </div>
 
@@ -286,7 +341,7 @@ class AnaylsisPage extends React.Component {
 
             <Container className="grey b">
               <h4 className="darkfont">Please generate a report</h4>
-              <StatTableManager data = {this.state.apiRes} metric = {this.state.selectedMetric} timePeriod = {this.state.selectedTimePeriod}/>
+              <StatTableManager data = {this.state.apiRes} metric = {this.state.selectedMetric} pnodeGroup = {this.state.selectedNode}/>
             </Container>
       </Container>
 
