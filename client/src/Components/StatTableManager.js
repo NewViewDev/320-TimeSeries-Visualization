@@ -1,16 +1,14 @@
 import React from "react"; 
+import AnalyticsTable from "../Components/AnalyticsTable";
+
+export const rows = [];
+
+let clearArray = () => { rows.length = 0; }
 
 //Generates 1 row
-function genRow(date, mean, std, median, keyValue){
+function genRow(timeperiod, mean, std, median, keyValue){
     return (
-        <tbody key = {keyValue}>
-            <tr>
-                <td className="darkfont">{date}</td>
-                <td className="darkfont">{mean}</td>
-                <td className="darkfont">{std}</td>
-                <td className="darkfont">{median}</td>
-            </tr>
-        </tbody>
+       {timeperiod, mean, median, std}
     )
 }
 
@@ -24,6 +22,9 @@ class StatTableManager extends React.Component {
     }
 
     genTable(){
+
+        clearArray();
+
         // this.handleDaily();
         if(this.props.data != undefined){
             console.log(this.props.data)
@@ -32,27 +33,19 @@ class StatTableManager extends React.Component {
                 let data = this.props.data[i]
                 let stats = data['groups']['all']['stats'];
                 tableData.push(genRow(data['interval'], stats['mean'], stats['std'], stats['median'], i))
-            }    
-            return tableData;
+                rows.push(genRow(data['interval'], stats['mean'], stats['std'], stats['median'], i));
+            }
+
+            //return tableData;
         }
     }
 
     render() {
         return (
             <div>
-                <table striped bordered hover>
-                    <thead>
-                        <tr>
-                            <th className="darkfont">Date</th>
-                            <th className="darkfont">Mean</th>
-                            <th className="darkfont">STD</th>
-                            <th className="darkfont">Median</th>
-                        </tr>
-                    </thead>
-                    {this.genTable()}
-                </table>
+                {this.genTable()}
+                <AnalyticsTable></AnalyticsTable>
             </div>
-            
         );
     }
 }

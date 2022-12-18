@@ -259,7 +259,7 @@ class AnaylsisPage extends React.Component {
       <Container className="grid">
             <Container className="a">
 
-              <DateRangeSelector setRange={val => {this.setState({ranges: val})}} ranges={[this.state.ranges]}></DateRangeSelector>
+              <DateRangeSelector setRange={val => {this.setState({ranges: val})}}></DateRangeSelector>
 
                 {/* The options the user can select from */}
                 <div>
@@ -286,12 +286,6 @@ class AnaylsisPage extends React.Component {
 
             <Container className="grey b">
               <h4 className="darkfont">Please generate a report</h4>
-              {/* Just prints out what the user currently has selected */}
-              {this.state.scenario}
-              {this.state.metric}
-              {this.state.timePeriod}
-              {this.state.node}
-              {/* <AnalyticsTable></AnalyticsTable> */}
               <StatTableManager data = {this.state.apiRes} metric = {this.state.selectedMetric} timePeriod = {this.state.selectedTimePeriod}/>
             </Container>
       </Container>
