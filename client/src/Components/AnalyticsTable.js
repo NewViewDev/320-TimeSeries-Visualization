@@ -79,6 +79,12 @@ const headCells = [
     label: 'Time Period',
   },
   {
+    id: 'group',
+    numeric: false,
+    disablePadding: false,
+    label: 'Group',
+  },
+  {
     id: 'mean',
     numeric: true,
     disablePadding: false,
@@ -306,7 +312,7 @@ export default function EnhancedTable() {
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.timeperiod}
+                      key={row.timeperiod + " " + row.group}
                       selected={isItemSelected}
                     >
                       <TableCell padding="checkbox">
@@ -326,6 +332,7 @@ export default function EnhancedTable() {
                       >
                         {localRep}
                       </TableCell>
+                      <TableCell align="left">{row.group}</TableCell>
                       <TableCell align="right">{row.mean}</TableCell>
                       <TableCell align="right">{row.median}</TableCell>
                       <TableCell align="right">{row.std}</TableCell>
