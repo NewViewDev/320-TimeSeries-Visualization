@@ -45,11 +45,6 @@ class StatTableManager extends React.Component {
                         rows.push(genRow(data['interval'], key, stats[key]['stats']['mean'], stats[key]['stats']['std'], stats[key]['stats']['median'], i));
                         
                     }
-                    console.log(data);
-
-                    // tableData.push(genRow(data['interval'], stats['mean'], stats['std'], stats['median'], i))
-                    // console.log(genRow(data['interval'], this.props.pnodeGroup, stats['mean'], stats['std'], stats['median'], i))
-                    // rows.push(genRow(data['interval'], this.props.pnodeGroup, stats['mean'], stats['std'], stats['median'], i));
                 }
             }
 
