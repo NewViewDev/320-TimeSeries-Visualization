@@ -85,6 +85,7 @@ class AnaylsisPage extends React.Component {
     console.log(this.state.ranges)
     let startDate = new Date(this.state.ranges['startDate'].getTime())
     let endDate = new Date(this.state.ranges['endDate'].getTime())
+    endDate.setDate(endDate.getDate() + 1)
     // let startDate = new Date(2020, 1, 1, 0);
     // let endDate = new Date(2020, 9, 5, 0);
 
@@ -140,6 +141,7 @@ class AnaylsisPage extends React.Component {
     let startDate = new Date(this.state.ranges['startDate'].getTime());
     startDate.setDate(1);
     let endDate = new Date(this.state.ranges['endDate'].getTime());
+    endDate.setMonth(endDate.getMonth() + 1)
     endDate.setDate(1);
 
     let startInterval = new Date(startDate.getTime())
