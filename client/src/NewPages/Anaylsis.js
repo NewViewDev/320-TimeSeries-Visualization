@@ -122,19 +122,27 @@ class AnaylsisPage extends React.Component {
     while(currEndInterval < endDate){
         //if the time between the currEndInteveral and nextInterval is daylight savings
         if(nextInterval.getTimezoneOffset() != offset){//nextInterval will has a different offset
+            let toFetch;
+            let response;
             if(startInterval.getTime() != currEndInterval.getTime()){//startInterval to currEndInterval is one interval of time in which daylight savings does not change
-
-              let toFetch = genFetch2(scenario, 'daily', offset, startInterval, currEndInterval, metric, pnodeID);
-              console.log(toFetch)
+              if(pnodeID != undefined){
+                toFetch = genFetch2(scenario, 'daily', offset, startInterval, currEndInterval, metric, pnodeID);
+              } else {
+                toFetch = genFetch(scenario, 'daily', offset, startInterval, currEndInterval, metric, grouping);
+              }
               let response =  await fetch(toFetch).then(res => res.json()) 
               if(response['data'] != undefined)
                 currArray = currArray.concat(response['data'])
             }
             //while currEndInterval to nextInterval is the day in which daylight saving changes
-            let toFetchDstChange = genFetch2(scenario, 'daily', offset, currEndInterval, nextInterval, metric, pnodeID, nextInterval.getTimezoneOffset() - currEndInterval.getTimezoneOffset());
-            let response2 =  await fetch(toFetchDstChange).then(res => res.json()) 
-            if(response2['data'] != undefined)
-              currArray.push(response2['data'][0])
+            if(pnodeID != undefined){
+              toFetch = genFetch2(scenario, 'daily', offset, currEndInterval, nextInterval, metric, pnodeID, nextInterval.getTimezoneOffset() - currEndInterval.getTimezoneOffset());
+            } else {
+              toFetch = genFetch(scenario, 'daily', offset, currEndInterval, nextInterval, metric, grouping, nextInterval.getTimezoneOffset() - currEndInterval.getTimezoneOffset());
+            }
+            response =  await fetch(toFetch).then(res => res.json()) 
+            if(response['data'] != undefined)
+              currArray.push(response['data'][0])
             offset = nextInterval.getTimezoneOffset();
             startInterval = new Date(nextInterval.getTime());//we start at the nextInterval for our start
         }
@@ -142,18 +150,23 @@ class AnaylsisPage extends React.Component {
         currEndInterval.setDate(currEndInterval.getDate() + 1)
         nextInterval.setDate(nextInterval.getDate() + 1)
     }
-
     //startInterval to currEndInterval is one interval of time in which daylight savings does not change
-    let toFetch = genFetch2(scenario, 'daily', offset, startInterval, currEndInterval, metric, pnodeID);
+    let toFetch;
+    if(pnodeID != undefined){
+      toFetch = genFetch2(scenario, 'daily', offset, startInterval, currEndInterval, metric, pnodeID);
+    } else {
+      toFetch = genFetch(scenario, 'daily', offset, startInterval, currEndInterval, metric, grouping);
+    }
+    console.log(toFetch);
     let response =  await fetch(toFetch).then(res => res.json()) 
     if(response['data'] != undefined)
       currArray = currArray.concat(response['data'])
-    if(nextInterval.getTimezoneOffset() != offset){//if the last date was daylight savings currEndInterval to nextInterval is the day in which daylight saving changes
-      let toFetchDstChange = genFetch2(scenario, 'daily', offset, currEndInterval, nextInterval, metric, pnodeID, nextInterval.getTimezoneOffset() - currEndInterval.getTimezoneOffset());
-      let response2 =  await fetch(toFetchDstChange).then(res => res.json()) 
-      if(response2['data'] != undefined)
-          currArray.push(response2['data'][0])
-    }
+    // if(nextInterval.getTimezoneOffset() != offset){//
+    //   let toFetchDstChange = genFetch2(scenario, 'daily', offset, currEndInterval, nextInterval, metric, pnodeID, nextInterval.getTimezoneOffset() - currEndInterval.getTimezoneOffset());
+    //   let response2 =  await fetch(toFetchDstChange).then(res => res.json()) 
+    //   if(response2['data'] != undefined)
+    //       currArray.push(response2['data'][0])
+    // }
     this.setState({
       apiRes: currArray,
       selectedMetric: metric,
@@ -180,37 +193,51 @@ class AnaylsisPage extends React.Component {
         //if the time between the currEndInteveral and nextInterval is daylight savings
         if(nextInterval.getTimezoneOffset() != offset){
             //make an iff to make sure that start and curr interval are not the same currently
+            let toFetch;
+            let response;
             if(startInterval.getTime() != currEndInterval.getTime()){
-              console.log(genFetch2(scenario, 'monthly', offset, startInterval, currEndInterval, metric, pnodeID));
-              let toFetch = genFetch2(scenario, 'monthly', offset, startInterval, currEndInterval, metric, pnodeID);
-              let response =  await fetch(toFetch).then(res => res.json()) 
+              if(pnodeID != undefined){
+                toFetch = genFetch2(scenario, 'monthly', offset, startInterval, currEndInterval, metric, pnodeID);
+              } else {
+                toFetch = genFetch(scenario, 'monthly', offset, startInterval, currEndInterval, metric, grouping);
+              }
+              console.log(toFetch)
+              response =  await fetch(toFetch).then(res => res.json()) 
               if(response['data'] != undefined)
                 currArray = currArray.concat(response['data'])
             }
-            let toFetchDstChange = genFetch2(scenario, 'monthly', offset, currEndInterval, nextInterval, metric, pnodeID, nextInterval.getTimezoneOffset() - currEndInterval.getTimezoneOffset());
-            console.log(toFetchDstChange)
-            let response2 =  await fetch(toFetchDstChange).then(res => res.json()) 
-            if(response2['data'] != undefined)
-              currArray.push(response2['data'][0])
+            if(pnodeID != undefined){
+              toFetch = genFetch2(scenario, 'monthly', offset, currEndInterval, nextInterval, metric, pnodeID, nextInterval.getTimezoneOffset() - currEndInterval.getTimezoneOffset());
+            } else {
+              toFetch = genFetch(scenario, 'monthly', offset, currEndInterval, nextInterval, metric, grouping, nextInterval.getTimezoneOffset() - currEndInterval.getTimezoneOffset());
+            }
+            console.log(toFetch)
+            response =  await fetch(toFetch).then(res => res.json()) 
+            if(response['data'] != undefined)
+              currArray.push(response['data'][0])
             offset = nextInterval.getTimezoneOffset();
             startInterval = new Date(nextInterval.getTime());
         }
         currEndInterval.setMonth(currEndInterval.getMonth() + 1, 1)
         nextInterval.setMonth(nextInterval.getMonth() + 1, 1)
     }
-    let toFetch = genFetch2(scenario, 'monthly', offset, startInterval, currEndInterval, metric, pnodeID);
+    let toFetch;
+    if(pnodeID != undefined){
+      toFetch = genFetch2(scenario, 'monthly', offset, startInterval, currEndInterval, metric, pnodeID);
+    } else {
+      toFetch = genFetch(scenario, 'monthly', offset, startInterval, currEndInterval, metric, grouping);
+    }
+    console.log(toFetch)
     let response =  await fetch(toFetch).then(res => res.json()) 
     if(response['data'] != undefined)
       currArray = currArray.concat(response['data'])
-    if(nextInterval.getTimezoneOffset() != offset){
-        console.log('hi');
-        let toFetchDstChange = genFetch2(scenario, 'monthly', offset, currEndInterval, nextInterval, metric, pnodeID, nextInterval.getTimezoneOffset() - currEndInterval.getTimezoneOffset());
-        let response2 =  await fetch(toFetchDstChange).then(res => res.json()) 
-        if(response2['data'] != undefined)
-          currArray.push(response2['data'][0])
-        offset = nextInterval.getTimezoneOffset();
-        startInterval = new Date(nextInterval.getTime());
-    }
+    // if(nextInterval.getTimezoneOffset() != offset){ //do we need this part
+    //     console.log('hi');
+    //     toFetch = genFetch2(scenario, 'monthly', offset, currEndInterval, nextInterval, metric, pnodeID, nextInterval.getTimezoneOffset() - currEndInterval.getTimezoneOffset());
+    //     response =  await fetch(toFetch).then(res => res.json()) 
+    //     if(response['data'] != undefined)
+    //       currArray.push(response['data'][0])
+    // }
 
     this.setState({
       apiRes: currArray,
@@ -228,7 +255,12 @@ class AnaylsisPage extends React.Component {
 
     let currArray = [];
     if(startDate < endDate){
-      let toFetch = genFetch2(scenario, 'yearly', offset, startDate, endDate, 'LMP', pnodeID);
+      let toFetch;
+      if(pnodeID != undefined){
+        toFetch = genFetch2(scenario, 'yearly', offset, startDate, endDate, metric, grouping);
+      } else {
+        toFetch = genFetch(scenario, 'yearly', offset, startDate, endDate, metric, grouping);
+      }
       console.log(toFetch)
       let response =  await fetch(toFetch).then(res => res.json()) 
       if(response['data'] != undefined)
@@ -251,9 +283,9 @@ class AnaylsisPage extends React.Component {
     if(startDate < endDate){
       let toFetch;
       if(pnodeID != undefined){
-        toFetch = genFetch2(scenario, 'all', offset, startDate, endDate, 'LMP', pnodeID, endDate.getTimezoneOffset() - startDate.getTimezoneOffset());
+        toFetch = genFetch2(scenario, 'all', offset, startDate, endDate, metric, pnodeID, endDate.getTimezoneOffset() - startDate.getTimezoneOffset());
       } else {
-        toFetch = genFetch(scenario, 'all', offset, startDate, endDate, 'LMP', grouping, endDate.getTimezoneOffset() - startDate.getTimezoneOffset());
+        toFetch = genFetch(scenario, 'all', offset, startDate, endDate, metric, grouping, endDate.getTimezoneOffset() - startDate.getTimezoneOffset());
       }
       console.log(toFetch)
       let response =  await fetch(toFetch).then(res => res.json()) 
@@ -304,7 +336,15 @@ class AnaylsisPage extends React.Component {
           this.handleAll(currScenario, currMetric, currPnode);
         }
       } else {
-        this.handleAll(currScenario, currMetric, undefined, currGrouping)
+        if(currTimePeriod == 'Daily'){
+          this.handleDaily(currScenario, currMetric, undefined, currGrouping);
+        } else if(currTimePeriod == 'Yearly') {
+          this.handleYearly(currScenario, currMetric, undefined, currGrouping);
+        } else if(currTimePeriod == 'Monthly') {
+          this.handleMonthly(currScenario, currMetric, undefined, currGrouping);
+        } else {
+          this.handleAll(currScenario, currMetric, undefined, currGrouping)
+        }
       }
     }
   }
