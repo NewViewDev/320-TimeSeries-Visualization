@@ -1,6 +1,7 @@
 # 320-TimeSeries-Visualization
 Purpose/Goal:
 Create a database independent data analytics tool that can effectively display historical and simulated data of electricity energy markets provided by ISO New England
+
 Two main components
 Sanity Check - Visualizing the comparison between historical data and chosen simulation data to ensure sanity
 Analysis - Quantifying the results of simulation data with various filtering options
