@@ -1,5 +1,10 @@
 # 320-TimeSeries-Visualization
-The purpose of this project is to make creative visualizations of ISO NewEngland's timeseries data so that they can monitor their network.
+Purpose/Goal:
+Create a database independent data analytics tool that can effectively display historical and simulated data of electricity energy markets provided by ISO New England
+Two main components
+Sanity Check - Visualizing the comparison between historical data and chosen simulation data to ensure sanity
+Analysis - Quantifying the results of simulation data with various filtering options
+
 
 ## Getting Started
 Before you start, make sure you have the following software installed:
