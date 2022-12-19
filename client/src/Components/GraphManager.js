@@ -125,7 +125,7 @@ class GraphManager extends React.Component {
         return <div>
             <Button onClick = {() => this.onAggregateButtonClick('Yearly')}>Yearly</Button>
             <Button onClick = {() => this.onAggregateButtonClick('Quarterly')}>Quarterly</Button>
-            <Button onClick = {() => this.onAggregateButtonClick('Monthly')}>Montly</Button>
+            <Button onClick = {() => this.onAggregateButtonClick('Monthly')}>Monthly</Button>
             <Button onClick = {() => this.onAggregateButtonClick('Daily')}>Daily</Button>
             <Button onClick = {() => this.onAggregateButtonClick('Hourly')}>Hourly</Button>
         </div>
